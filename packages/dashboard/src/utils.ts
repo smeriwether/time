@@ -93,7 +93,7 @@ export function transformByTool(
       color: TOOL_COLORS[tool]?.color ?? '#666',
       icon: TOOL_COLORS[tool]?.icon ?? tool.charAt(0).toUpperCase(),
     }))
-    .sort((a, b) => b.seconds - a.seconds)
+    .toSorted((a, b) => b.seconds - a.seconds)
 }
 
 export interface LanguageDisplayData {
@@ -112,7 +112,7 @@ export function transformByLanguage(
       seconds,
       color: LANG_COLORS[lang.toLowerCase()] ?? '#666',
     }))
-    .sort((a, b) => b.seconds - a.seconds)
+    .toSorted((a, b) => b.seconds - a.seconds)
     .slice(0, limit)
 }
 
@@ -130,7 +130,7 @@ export function transformByProject(
       name,
       seconds,
     }))
-    .sort((a, b) => b.seconds - a.seconds)
+    .toSorted((a, b) => b.seconds - a.seconds)
     .slice(0, limit)
 }
 
