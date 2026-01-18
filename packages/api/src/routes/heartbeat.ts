@@ -2,7 +2,6 @@ import { Hono } from 'hono';
 import {
   HeartbeatSchema,
   HeartbeatBatchRequestSchema,
-  type Heartbeat,
   type HeartbeatResponse,
 } from '@devtime/shared';
 import type { Env } from '../types';
@@ -28,7 +27,15 @@ heartbeatRoutes.post('/', async (c) => {
   }
 
   const auth = c.get('auth');
-  await storeHeartbeats([result.data], auth.userId, c.env);
+  const storePromise = storeHeartbeats([result.data], auth.userId, c.env);
+
+  // Store asynchronously when possible - don't block the response
+  try {
+    c.executionCtx.waitUntil(storePromise);
+  } catch {
+    // Test environment - fall back to sync
+    await storePromise;
+  }
 
   const response: HeartbeatResponse = { ok: true, received: 1 };
   return c.json(response);
@@ -52,7 +59,15 @@ heartbeatRoutes.post('/batch', async (c) => {
   }
 
   const auth = c.get('auth');
-  await storeHeartbeats(result.data.heartbeats, auth.userId, c.env);
+  const storePromise = storeHeartbeats(result.data.heartbeats, auth.userId, c.env);
+
+  // Store asynchronously when possible - don't block the response
+  try {
+    c.executionCtx.waitUntil(storePromise);
+  } catch {
+    // Test environment - fall back to sync
+    await storePromise;
+  }
 
   const response: HeartbeatResponse = { ok: true, received: result.data.heartbeats.length };
   return c.json(response);
