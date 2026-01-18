@@ -11,7 +11,7 @@ Track how much time you spend coding across different tools and projects. Like W
 ## Features
 
 - **Multi-tool tracking**: VSCode, Claude Code, Codex CLI, Zed
-- **Self-hostable**: Deploy on Cloudflare Workers + PlanetScale for ~$0/month
+- **Self-hostable**: Deploy on Cloudflare Workers + D1 for ~$0/month
 - **Privacy-first**: Your data stays on your infrastructure
 - **Simple dashboard**: Daily/weekly/monthly breakdowns by tool, project, and language
 - **Offline support**: Heartbeats are queued and sent when connection is restored
@@ -44,7 +44,7 @@ The dashboard shows your coding activity at a glance:
                            │
                            ▼
 ┌──────────────────────────────────────────────────────────┐
-│              Database (PlanetScale)                       │
+│              Database (Cloudflare D1)                     │
 └──────────────────────────────────────────────────────────┘
                            │
                            ▼
@@ -55,83 +55,14 @@ The dashboard shows your coding activity at a glance:
 
 ## Plugins
 
-### VSCode Extension
+| Plugin | Status | Description |
+|--------|--------|-------------|
+| VSCode | Ready | Tracks file edits, debugging sessions |
+| Claude Code | Ready | Tracks AI coding sessions via hooks |
+| Codex CLI | Coming Soon | OpenTelemetry-based tracking |
+| Zed | Coming Soon | LSP-based tracking |
 
-The VSCode extension tracks your coding activity automatically:
-
-- Tracks file opens, edits, and saves
-- Detects programming language automatically
-- Tracks debugging sessions separately
-- Shows time in status bar
-- Batches heartbeats to reduce network usage
-
-**Installation:**
-```bash
-# From source
-cd packages/plugins/vscode
-pnpm install
-pnpm build
-# Then install the .vsix file
-```
-
-**Configuration:**
-```json
-{
-  "devtime.enabled": true,
-  "devtime.apiEndpoint": "https://your-api.example.com",
-  "devtime.apiKey": "your-api-key",
-  "devtime.heartbeatInterval": 120
-}
-```
-
-### Claude Code
-
-Uses Claude Code's hook system to track AI coding sessions.
-
-**Installation:**
-```bash
-cd packages/plugins/claude-code
-pnpm install
-pnpm build
-
-# Install hooks into Claude Code
-node dist/cli.js install
-
-# Configure API endpoint
-node dist/cli.js config --endpoint https://api.devtime.dev --key dt_xxx
-```
-
-**What it tracks:**
-- SessionStart/SessionEnd for session duration
-- Tool usage (Bash, Read, Write, Edit, Glob, Grep)
-- Project context from working directory
-- File and language detection
-
-**How it works:**
-1. Hooks are added to `~/.claude/settings.json`
-2. Each tool use triggers a heartbeat
-3. Heartbeats are queued locally in `~/.devtime/heartbeat-queue.json`
-4. Queue is flushed to API on session end (or manually with `flush` command)
-
-**Commands:**
-```bash
-devtime-claude install     # Install hooks
-devtime-claude uninstall   # Remove hooks
-devtime-claude config      # Configure API
-devtime-claude flush       # Manually flush queue
-```
-
-### Codex CLI (Coming Soon)
-
-Wraps Codex CLI to track AI-assisted coding:
-- Uses OpenTelemetry integration
-- Tracks session duration and commands
-
-### Zed (Coming Soon)
-
-Language server approach for Zed editor:
-- Registers as LSP to receive edit events
-- Similar to WakaTime's approach
+See [packages/plugins/README.md](packages/plugins/README.md) for installation and configuration details.
 
 ## Project Structure
 
@@ -144,6 +75,8 @@ packages/
     ├── vscode/       # VSCode extension
     └── claude-code/  # Claude Code hook-based plugin
 ```
+
+See [packages/README.md](packages/README.md) for detailed package documentation.
 
 ## API
 
@@ -247,6 +180,8 @@ wrangler secret put API_KEYS  # KV namespace binding
 
 ## Development
 
+### Quick Start
+
 ```bash
 # Install dependencies
 pnpm install
@@ -256,22 +191,46 @@ pnpm build
 
 # Run all tests
 pnpm test
+```
 
-# Build specific package
+### Local Development
+
+**No Cloudflare account required for local development.** The API uses in-memory storage when D1/KV aren't configured, making it easy to develop and test locally.
+
+```bash
+# Start the API server (uses in-memory storage)
+pnpm --filter @devtime/api dev
+
+# In another terminal, start the dashboard
+pnpm --filter @devtime/dashboard dev
+```
+
+The API runs on `http://localhost:8787` and the dashboard on `http://localhost:5173`.
+
+For local development, use the dev API key: `dt_dev_key`
+
+### Building Specific Packages
+
+```bash
 pnpm --filter @devtime/shared build
 pnpm --filter @devtime/api build
 pnpm --filter @devtime/dashboard build
 pnpm --filter devtime-vscode build
+```
 
-# Run API locally
+### Seeding Sample Data
+
+To populate the dashboard with sample data for development:
+
+```bash
+# Start the API (in one terminal)
 pnpm --filter @devtime/api dev
 
-# Run dashboard locally
-pnpm --filter @devtime/dashboard dev
-
-# Preview dashboard build
-pnpm --filter @devtime/dashboard preview
+# Seed with 30 days of sample heartbeats (in another terminal)
+pnpm seed
 ```
+
+This generates realistic heartbeat data across multiple projects, tools, and languages.
 
 ### Running E2E Tests
 
