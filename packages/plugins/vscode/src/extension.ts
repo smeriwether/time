@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as os from 'os';
 import * as crypto from 'crypto';
-import { type Heartbeat, API_VERSION } from '@devtime/shared';
+import { type Heartbeat, API_VERSION, formatDuration, formatDurationLong } from '@devtime/shared';
 
 class DevTimeTracker {
   private statusBarItem: vscode.StatusBarItem;
@@ -66,10 +66,7 @@ class DevTimeTracker {
   }
 
   private updateStatusBar(): void {
-    const hours = Math.floor(this.todaySeconds / 3600);
-    const minutes = Math.floor((this.todaySeconds % 3600) / 60);
-
-    const timeStr = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+    const timeStr = formatDuration(this.todaySeconds);
     const icon = this.isTracking ? '$(clock)' : '$(debug-pause)';
 
     this.statusBarItem.text = `${icon} ${timeStr}`;
@@ -159,11 +156,14 @@ class DevTimeTracker {
       this.heartbeatQueue.shift();
     }
     this.heartbeatQueue.push(heartbeat);
+
+    // Check gap before updating lastHeartbeat
+    const timeSinceLastHeartbeat = now - this.lastHeartbeat;
     this.lastHeartbeat = now;
     this.lastFile = filePath;
 
-    // Update local time tracking (estimate ~2 minutes per heartbeat)
-    if (this.heartbeatQueue.length === 1 || now - this.lastHeartbeat > 60000) {
+    // Update local time tracking when first heartbeat or significant gap
+    if (this.heartbeatQueue.length === 1 || timeSinceLastHeartbeat > 60000) {
       this.todaySeconds += 120;
       this.saveTodayTime();
       this.updateStatusBar();
@@ -185,8 +185,8 @@ class DevTimeTracker {
     const apiKey = this.getConfig().get<string>('apiKey', '');
 
     if (!apiEndpoint || !apiKey) {
-      // No API configured, just clear the queue (local tracking only)
-      this.heartbeatQueue = [];
+      // No API configured - keep heartbeats in queue until API is configured
+      // Queue is already bounded by MAX_QUEUE_SIZE
       return;
     }
 
@@ -258,12 +258,7 @@ class DevTimeTracker {
   }
 
   public showStatus(): void {
-    const hours = Math.floor(this.todaySeconds / 3600);
-    const minutes = Math.floor((this.todaySeconds % 3600) / 60);
-
-    const timeStr = hours > 0
-      ? `${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`
-      : `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+    const timeStr = formatDurationLong(this.todaySeconds);
 
     vscode.window.showInformationMessage(
       `DevTime: You've coded for ${timeStr} today`,

@@ -9,8 +9,7 @@ const CONFIG_FILE = path.join(CONFIG_DIR, 'config.json');
 const SESSION_FILE = path.join(CONFIG_DIR, 'current-session.json');
 
 const MAX_QUEUE_SIZE = 1000;
-const BATCH_SIZE = 50;
-const FLUSH_INTERVAL_MS = 30000;
+const API_BATCH_SIZE = 1000; // API accepts up to 1000 heartbeats per request
 
 export interface Config {
   apiEndpoint: string;
@@ -201,42 +200,59 @@ export function queueHeartbeat(heartbeat: Heartbeat): void {
   saveQueue(queue);
 }
 
-export async function flushQueue(): Promise<void> {
+export interface FlushResult {
+  sent: number;
+  failed: number;
+  remaining: number;
+}
+
+export async function flushQueue(): Promise<FlushResult> {
+  const result: FlushResult = { sent: 0, failed: 0, remaining: 0 };
+
   const config = loadConfig();
   if (!config?.apiEndpoint || !config?.apiKey) {
-    return;
+    result.remaining = loadQueue().length;
+    return result;
   }
 
-  const queue = loadQueue();
-  if (queue.length === 0) {
-    return;
-  }
+  let queue = loadQueue();
 
-  const batch = queue.slice(0, BATCH_SIZE);
-  const remaining = queue.slice(BATCH_SIZE);
+  while (queue.length > 0) {
+    const batch = queue.slice(0, API_BATCH_SIZE);
+    const remaining = queue.slice(API_BATCH_SIZE);
 
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
 
-    const response = await fetch(`${config.apiEndpoint}/${API_VERSION}/heartbeat/batch`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${config.apiKey}`,
-      },
-      body: JSON.stringify({ heartbeats: batch }),
-      signal: controller.signal,
-    });
+      const response = await fetch(`${config.apiEndpoint}/${API_VERSION}/heartbeat/batch`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${config.apiKey}`,
+        },
+        body: JSON.stringify({ heartbeats: batch }),
+        signal: controller.signal,
+      });
 
-    clearTimeout(timeout);
+      clearTimeout(timeout);
 
-    if (response.ok) {
-      saveQueue(remaining);
+      if (response.ok) {
+        result.sent += batch.length;
+        queue = remaining;
+        saveQueue(queue);
+      } else {
+        result.failed += batch.length;
+        break; // Stop on API error
+      }
+    } catch {
+      result.failed += batch.length;
+      break; // Stop on network error
     }
-  } catch {
-    // Network error - keep queue for retry
   }
+
+  result.remaining = queue.length;
+  return result;
 }
 
 export async function handleHook(input: HookInput): Promise<void> {

@@ -6,7 +6,7 @@ export const TOOLS = ['vscode', 'claude-code', 'codex', 'zed'] as const;
 export const ACTIVITY_TYPES = ['coding', 'debugging', 'prompting', 'browsing'] as const;
 
 export const HeartbeatSchema = z.object({
-  tool: z.string().min(1),
+  tool: z.enum(TOOLS),
   timestamp: z.number().int().positive(),
   activity_type: z.enum(ACTIVITY_TYPES),
 
@@ -75,47 +75,6 @@ export const StatsResponseSchema = z.object({
 });
 
 export type StatsResponse = z.infer<typeof StatsResponseSchema>;
-
-export const ErrorResponseSchema = z.object({
-  error: z.string(),
-  code: z.string().optional(),
-});
-
-export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;
-
-export const ConfigSchema = z.object({
-  api: z.object({
-    endpoint: z.string().url(),
-    key: z.string(),
-  }),
-  privacy: z.object({
-    anonymize_file_paths: z.boolean(),
-    exclude_projects: z.array(z.string()),
-    exclude_file_patterns: z.array(z.string()),
-  }),
-  tracking: z.object({
-    idle_timeout_minutes: z.number().int().positive(),
-    heartbeat_interval_seconds: z.number().int().positive(),
-  }),
-});
-
-export type Config = z.infer<typeof ConfigSchema>;
-
-export const DEFAULT_CONFIG: Config = {
-  api: {
-    endpoint: 'https://api.devtime.dev',
-    key: '',
-  },
-  privacy: {
-    anonymize_file_paths: false,
-    exclude_projects: [],
-    exclude_file_patterns: ['*.env', '*.secret', '*.key'],
-  },
-  tracking: {
-    idle_timeout_minutes: 15,
-    heartbeat_interval_seconds: 120,
-  },
-};
 
 export const SESSION_GAP_MS = 15 * 60 * 1000;
 
@@ -225,4 +184,44 @@ export function aggregateStats(heartbeats: Heartbeat[]): Omit<StatsResponse, 'by
   }
 
   return { total_seconds: totalSeconds, by_tool: byTool, by_project: byProject, by_language: byLanguage };
+}
+
+export interface DayStats {
+  date: string;
+  seconds: number;
+}
+
+export function aggregateByDay(
+  heartbeats: { timestamp: number }[],
+  startTime: number,
+  endTime: number
+): DayStats[] {
+  const dayMap = new Map<string, number>();
+
+  let current = new Date(startTime);
+  current.setHours(0, 0, 0, 0);
+
+  while (current.getTime() <= endTime) {
+    dayMap.set(current.toISOString().split('T')[0], 0);
+    current.setDate(current.getDate() + 1);
+  }
+
+  const sorted = [...heartbeats].sort((a, b) => a.timestamp - b.timestamp);
+
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = sorted[i - 1];
+    const curr = sorted[i];
+    const gap = curr.timestamp - prev.timestamp;
+
+    if (gap < SESSION_GAP_MS) {
+      // Attribute time to previous heartbeat's day (when activity occurred)
+      const date = new Date(prev.timestamp).toISOString().split('T')[0];
+      const seconds = Math.round(gap / 1000);
+      dayMap.set(date, (dayMap.get(date) ?? 0) + seconds);
+    }
+  }
+
+  return Array.from(dayMap.entries())
+    .map(([date, seconds]) => ({ date, seconds }))
+    .sort((a, b) => a.date.localeCompare(b.date));
 }

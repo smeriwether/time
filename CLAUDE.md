@@ -49,6 +49,10 @@ Write tests that provide value:
 - **Integration test layers** - Test how components work together (API routes with request/response cycles)
 - **Avoid mock-heavy tests** - Tests like "expect X to have been called" verify implementation, not behavior
 - **Test behavior, not implementation** - If the test breaks when refactoring without changing behavior, it's testing the wrong thing
+- **Red/green testing** - When writing tests for bug fixes:
+  1. Write the test first against the buggy code (should fail - "red")
+  2. Fix the bug (test should pass - "green")
+  3. This confirms the test actually catches the bug and passes for the right reason
 
 Example of a good test:
 ```typescript

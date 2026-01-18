@@ -1,5 +1,6 @@
 export interface Env {
-  ENVIRONMENT: string;
+  ENVIRONMENT?: string;
+  DASHBOARD_ORIGIN?: string;
   DB?: D1Database;
   HEARTBEATS?: KVNamespace;
   API_KEYS?: KVNamespace;

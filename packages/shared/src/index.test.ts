@@ -6,6 +6,7 @@ import {
   formatDurationLong,
   groupHeartbeatsIntoSessions,
   aggregateStats,
+  aggregateByDay,
   type Heartbeat,
 } from './index';
 
@@ -268,5 +269,87 @@ describe('aggregateStats', () => {
 
     expect(stats.by_language['typescript']).toBe(120);
     expect(stats.by_language['python']).toBe(60);
+  });
+});
+
+describe('aggregateByDay', () => {
+  it('returns zeros for empty heartbeats', () => {
+    const startTime = new Date('2025-01-15').getTime();
+    const endTime = new Date('2025-01-17').getTime();
+
+    const result = aggregateByDay([], startTime, endTime);
+
+    expect(result).toHaveLength(3);
+    expect(result.every(d => d.seconds === 0)).toBe(true);
+  });
+
+  it('attributes time to previous heartbeat day (when activity occurred)', () => {
+    // Heartbeat at 11:59 PM on Jan 15, next heartbeat at 12:01 AM on Jan 16
+    // The 2 minutes of work happened on Jan 15 (before the second heartbeat)
+    const jan15_2359 = new Date('2025-01-15T23:59:00Z').getTime();
+    const jan16_0001 = new Date('2025-01-16T00:01:00Z').getTime();
+
+    const heartbeats = [
+      { timestamp: jan15_2359 },
+      { timestamp: jan16_0001 },
+    ];
+
+    const startTime = new Date('2025-01-15').getTime();
+    const endTime = new Date('2025-01-16').getTime();
+
+    const result = aggregateByDay(heartbeats, startTime, endTime);
+
+    const jan15 = result.find(d => d.date === '2025-01-15');
+    const jan16 = result.find(d => d.date === '2025-01-16');
+
+    // Time should be attributed to Jan 15 (when activity occurred)
+    expect(jan15?.seconds).toBe(120);
+    expect(jan16?.seconds).toBe(0);
+  });
+
+  it('calculates time between heartbeats within same day', () => {
+    const jan15_1000 = new Date('2025-01-15T10:00:00Z').getTime();
+    const jan15_1001 = new Date('2025-01-15T10:01:00Z').getTime();
+    const jan15_1002 = new Date('2025-01-15T10:02:00Z').getTime();
+
+    const heartbeats = [
+      { timestamp: jan15_1000 },
+      { timestamp: jan15_1001 },
+      { timestamp: jan15_1002 },
+    ];
+
+    const result = aggregateByDay(heartbeats, jan15_1000, jan15_1002);
+
+    const jan15 = result.find(d => d.date === '2025-01-15');
+    expect(jan15?.seconds).toBe(120);
+  });
+
+  it('ignores gaps larger than session threshold', () => {
+    const jan15_1000 = new Date('2025-01-15T10:00:00Z').getTime();
+    const jan15_1100 = new Date('2025-01-15T11:00:00Z').getTime(); // 1 hour gap
+
+    const heartbeats = [
+      { timestamp: jan15_1000 },
+      { timestamp: jan15_1100 },
+    ];
+
+    const result = aggregateByDay(heartbeats, jan15_1000, jan15_1100);
+
+    const jan15 = result.find(d => d.date === '2025-01-15');
+    expect(jan15?.seconds).toBe(0);
+  });
+
+  it('total by_day matches aggregateStats total_seconds', () => {
+    const heartbeats: Heartbeat[] = [
+      { tool: 'vscode', timestamp: 1000000, activity_type: 'coding' },
+      { tool: 'vscode', timestamp: 1060000, activity_type: 'coding' },
+      { tool: 'vscode', timestamp: 1120000, activity_type: 'coding' },
+    ];
+
+    const stats = aggregateStats(heartbeats);
+    const byDay = aggregateByDay(heartbeats, 1000000, 1120000);
+    const byDayTotal = byDay.reduce((sum, d) => sum + d.seconds, 0);
+
+    expect(byDayTotal).toBe(stats.total_seconds);
   });
 });

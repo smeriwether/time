@@ -35,13 +35,15 @@ export const authMiddleware = createMiddleware<{ Bindings: Env }>(async (c, next
 });
 
 async function validateApiKey(apiKey: string, env?: Env): Promise<string | null> {
+  // Check KV store for API key
   if (env?.API_KEYS) {
     const userId = await env.API_KEYS.get(apiKey);
-    return userId;
+    if (userId) return userId;
   }
 
-  const isDev = !env?.ENVIRONMENT || env.ENVIRONMENT === 'development';
-  if (isDev && apiKey === 'dt_dev_key') {
+  // Dev key only works when ENVIRONMENT is explicitly set to 'development'
+  // This prevents accidental exposure in misconfigured production deployments
+  if (env?.ENVIRONMENT === 'development' && apiKey === 'dt_dev_key') {
     return 'dev-user';
   }
 

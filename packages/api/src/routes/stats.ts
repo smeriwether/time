@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import {
   StatsQuerySchema,
   aggregateStats,
+  aggregateByDay,
   type StatsResponse,
 } from '@devtime/shared';
 import type { Env } from '../types';
@@ -62,39 +63,4 @@ function getTimeRange(range: string): { startTime: number; endTime: number } {
     default:
       return { startTime: now - 7 * 24 * 60 * 60 * 1000, endTime };
   }
-}
-
-function aggregateByDay(
-  heartbeats: { timestamp: number }[],
-  startTime: number,
-  endTime: number
-): Array<{ date: string; seconds: number }> {
-  const dayMap = new Map<string, number>();
-
-  let current = new Date(startTime);
-  current.setHours(0, 0, 0, 0);
-
-  while (current.getTime() <= endTime) {
-    dayMap.set(current.toISOString().split('T')[0], 0);
-    current.setDate(current.getDate() + 1);
-  }
-
-  const sorted = [...heartbeats].sort((a, b) => a.timestamp - b.timestamp);
-  let prevTimestamp: number | null = null;
-
-  for (const hb of sorted) {
-    if (prevTimestamp !== null) {
-      const gap = hb.timestamp - prevTimestamp;
-      if (gap < 15 * 60 * 1000) {
-        const date = new Date(hb.timestamp).toISOString().split('T')[0];
-        const seconds = Math.round(gap / 1000);
-        dayMap.set(date, (dayMap.get(date) ?? 0) + seconds);
-      }
-    }
-    prevTimestamp = hb.timestamp;
-  }
-
-  return Array.from(dayMap.entries())
-    .map(([date, seconds]) => ({ date, seconds }))
-    .sort((a, b) => a.date.localeCompare(b.date));
 }

@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import app from './index';
+import type { Env } from './types';
 
 const validHeartbeat = {
   tool: 'vscode',
@@ -12,10 +13,17 @@ const validHeartbeat = {
 
 const devAuthHeader = { Authorization: 'Bearer dt_dev_key' };
 
+// Test environment - explicitly set to development
+const testEnv: Env = { ENVIRONMENT: 'development' };
+
+function testRequest(path: string, init?: RequestInit) {
+  return app.request(path, init, testEnv);
+}
+
 describe('API Integration', () => {
   describe('GET /', () => {
     it('returns API info', async () => {
-      const res = await app.request('/');
+      const res = await testRequest('/');
       expect(res.status).toBe(200);
 
       const body = await res.json();
@@ -26,7 +34,7 @@ describe('API Integration', () => {
 
   describe('GET /health', () => {
     it('returns health status', async () => {
-      const res = await app.request('/health');
+      const res = await testRequest('/health');
       expect(res.status).toBe(200);
 
       const body = await res.json();
@@ -37,7 +45,7 @@ describe('API Integration', () => {
 
   describe('POST /v1/heartbeat', () => {
     it('rejects requests without auth', async () => {
-      const res = await app.request('/v1/heartbeat', {
+      const res = await testRequest('/v1/heartbeat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(validHeartbeat),
@@ -47,7 +55,7 @@ describe('API Integration', () => {
     });
 
     it('rejects invalid API key format', async () => {
-      const res = await app.request('/v1/heartbeat', {
+      const res = await testRequest('/v1/heartbeat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,8 +67,22 @@ describe('API Integration', () => {
       expect(res.status).toBe(401);
     });
 
-    it('accepts valid heartbeat with dev key', async () => {
+    it('rejects dev key when ENVIRONMENT is not development', async () => {
+      const prodEnv: Env = { ENVIRONMENT: 'production' };
       const res = await app.request('/v1/heartbeat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...devAuthHeader,
+        },
+        body: JSON.stringify(validHeartbeat),
+      }, prodEnv);
+
+      expect(res.status).toBe(401);
+    });
+
+    it('accepts valid heartbeat with dev key in development', async () => {
+      const res = await testRequest('/v1/heartbeat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +99,7 @@ describe('API Integration', () => {
     });
 
     it('rejects invalid heartbeat data', async () => {
-      const res = await app.request('/v1/heartbeat', {
+      const res = await testRequest('/v1/heartbeat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +115,7 @@ describe('API Integration', () => {
     });
 
     it('rejects invalid JSON', async () => {
-      const res = await app.request('/v1/heartbeat', {
+      const res = await testRequest('/v1/heartbeat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +130,7 @@ describe('API Integration', () => {
 
   describe('POST /v1/heartbeat/batch', () => {
     it('accepts batch of heartbeats', async () => {
-      const res = await app.request('/v1/heartbeat/batch', {
+      const res = await testRequest('/v1/heartbeat/batch', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -130,7 +152,7 @@ describe('API Integration', () => {
     });
 
     it('rejects empty batch', async () => {
-      const res = await app.request('/v1/heartbeat/batch', {
+      const res = await testRequest('/v1/heartbeat/batch', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -145,7 +167,7 @@ describe('API Integration', () => {
 
   describe('GET /v1/stats', () => {
     it('returns stats with default range', async () => {
-      const res = await app.request('/v1/stats', {
+      const res = await testRequest('/v1/stats', {
         headers: devAuthHeader,
       });
 
@@ -160,7 +182,7 @@ describe('API Integration', () => {
     });
 
     it('accepts range parameter', async () => {
-      const res = await app.request('/v1/stats?range=today', {
+      const res = await testRequest('/v1/stats?range=today', {
         headers: devAuthHeader,
       });
 
@@ -168,7 +190,7 @@ describe('API Integration', () => {
     });
 
     it('accepts filter parameters', async () => {
-      const res = await app.request('/v1/stats?project=my-project&tool=vscode', {
+      const res = await testRequest('/v1/stats?project=my-project&tool=vscode', {
         headers: devAuthHeader,
       });
 
@@ -178,7 +200,7 @@ describe('API Integration', () => {
 
   describe('404 handling', () => {
     it('returns 404 for unknown routes outside v1', async () => {
-      const res = await app.request('/unknown-route');
+      const res = await testRequest('/unknown-route');
       expect(res.status).toBe(404);
 
       const body = await res.json();
@@ -186,7 +208,7 @@ describe('API Integration', () => {
     });
 
     it('returns 401 for unknown routes inside v1 without auth', async () => {
-      const res = await app.request('/v1/unknown');
+      const res = await testRequest('/v1/unknown');
       expect(res.status).toBe(401);
     });
   });

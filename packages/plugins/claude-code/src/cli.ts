@@ -189,10 +189,22 @@ async function main(): Promise<void> {
       break;
     }
 
-    case 'flush':
-      await flushQueue();
-      console.log('Queue flushed');
+    case 'flush': {
+      const result = await flushQueue();
+      if (result.sent > 0) {
+        console.log(`Sent ${result.sent} heartbeat${result.sent !== 1 ? 's' : ''}`);
+      }
+      if (result.failed > 0) {
+        console.log(`Failed to send ${result.failed} heartbeat${result.failed !== 1 ? 's' : ''}`);
+      }
+      if (result.remaining > 0) {
+        console.log(`${result.remaining} heartbeat${result.remaining !== 1 ? 's' : ''} remaining in queue`);
+      }
+      if (result.sent === 0 && result.failed === 0 && result.remaining === 0) {
+        console.log('Queue is empty');
+      }
       break;
+    }
 
     case 'help':
     case '--help':

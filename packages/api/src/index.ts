@@ -9,7 +9,16 @@ import type { Env } from './types';
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.use('*', cors());
+app.use('*', (c, next) => {
+  const origin = c.env?.DASHBOARD_ORIGIN;
+  const isDev = c.env?.ENVIRONMENT === 'development';
+
+  return cors({
+    origin: isDev || !origin ? '*' : origin,
+    allowMethods: ['GET', 'POST', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+  })(c, next);
+});
 app.use('*', logger());
 
 app.get('/', (c) => {
