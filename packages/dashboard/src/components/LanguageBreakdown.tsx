@@ -21,8 +21,8 @@ export function LanguageBreakdown({ data }: LanguageBreakdownProps) {
         {data.length === 0 ? (
           <div className="text-center text-text-secondary">No language data</div>
         ) : (
-          data.map((lang, i) => (
-            <div key={i} className="flex flex-col gap-2" data-testid={`lang-${lang.name.toLowerCase()}`}>
+          data.map((lang) => (
+            <div key={lang.name} className="flex flex-col gap-2" data-testid={`lang-${lang.name.toLowerCase()}`}>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2 text-sm">
                   <div

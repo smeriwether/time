@@ -21,8 +21,8 @@ export function ActivityChart({ data }: ActivityChartProps) {
         {data.length === 0 ? (
           <div className="flex-1 flex items-center justify-center text-text-secondary">No activity data</div>
         ) : (
-          data.map((day, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center" data-testid={`day-${day.date}`}>
+          data.map((day) => (
+            <div key={day.date} className="flex-1 flex flex-col items-center" data-testid={`day-${day.date}`}>
               <div className="flex-1 flex items-end justify-center w-full">
                 <div
                   className="w-full max-w-10 bar-gradient rounded-t hover:opacity-80 transition-opacity relative group"

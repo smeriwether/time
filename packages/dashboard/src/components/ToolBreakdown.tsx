@@ -23,8 +23,8 @@ export function ToolBreakdown({ data }: ToolBreakdownProps) {
         {data.length === 0 ? (
           <div className="text-center text-text-secondary">No tool data</div>
         ) : (
-          data.map((tool, i) => (
-            <div key={i} className="flex flex-col gap-2" data-testid={`tool-${tool.tool}`}>
+          data.map((tool) => (
+            <div key={tool.tool} className="flex flex-col gap-2" data-testid={`tool-${tool.tool}`}>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2 text-sm">
                   <div

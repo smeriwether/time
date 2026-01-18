@@ -23,8 +23,8 @@ export function ProjectList({ data }: ProjectListProps) {
         {data.length === 0 ? (
           <div className="text-center text-text-secondary">No project data</div>
         ) : (
-          data.map((project, i) => (
-            <div key={i} className="flex justify-between items-center" data-testid={`project-${project.name}`}>
+          data.map((project) => (
+            <div key={project.name} className="flex justify-between items-center" data-testid={`project-${project.name}`}>
               <div className="flex items-center gap-2 text-sm">
                 {folderIcon}
                 {project.name}
