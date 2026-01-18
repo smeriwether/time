@@ -3,8 +3,9 @@ main = "src/index.ts"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Default is development for local dev, overridden per-environment for deploys
 [vars]
-ENVIRONMENT = "production"
+ENVIRONMENT = "development"
 
 # KV namespace for storing heartbeats (used before DB migration)
 # [[kv_namespaces]]
@@ -17,9 +18,9 @@ ENVIRONMENT = "production"
 # database_name = "devtime"
 # database_id = "your-database-id"
 
-# Development environment
-[env.dev]
-vars = { ENVIRONMENT = "development" }
+# Production environment (for `wrangler deploy --env production`)
+[env.production]
+vars = { ENVIRONMENT = "production" }
 
 # Staging environment
 [env.staging]

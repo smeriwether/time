@@ -5,6 +5,7 @@ import { API_VERSION } from '@devtime/shared';
 import { heartbeatRoutes } from './routes/heartbeat';
 import { statsRoutes } from './routes/stats';
 import { authMiddleware } from './middleware/auth';
+import { clearMemoryStore } from './db/heartbeats';
 import type { Env } from './types';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -31,6 +32,15 @@ app.get('/', (c) => {
 
 app.get('/health', (c) => {
   return c.json({ status: 'ok', timestamp: Date.now() });
+});
+
+// Test-only endpoint to reset in-memory store (only available in development)
+app.post('/test/reset', (c) => {
+  if (c.env?.ENVIRONMENT !== 'development') {
+    return c.json({ error: 'Not available in production' }, 403);
+  }
+  clearMemoryStore();
+  return c.json({ ok: true });
 });
 
 const v1 = new Hono<{ Bindings: Env }>();

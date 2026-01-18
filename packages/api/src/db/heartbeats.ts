@@ -6,6 +6,13 @@ interface StoredHeartbeat extends Heartbeat {
   id: string;
 }
 
+// In-memory storage for development/testing when no DB or KV is configured
+const memoryStore = new Map<string, StoredHeartbeat[]>();
+
+export function clearMemoryStore(): void {
+  memoryStore.clear();
+}
+
 export async function storeHeartbeats(
   heartbeats: Heartbeat[],
   userId: string,
@@ -15,6 +22,8 @@ export async function storeHeartbeats(
     await storeInD1(heartbeats, userId, env.DB);
   } else if (env?.HEARTBEATS) {
     await storeInKV(heartbeats, userId, env.HEARTBEATS);
+  } else {
+    storeInMemory(heartbeats, userId);
   }
 }
 
@@ -31,7 +40,7 @@ export async function getHeartbeats(
     return getFromKV(userId, startTime, endTime, env.HEARTBEATS, filters);
   }
 
-  return [];
+  return getFromMemory(userId, startTime, endTime, filters);
 }
 
 async function storeInD1(
@@ -148,6 +157,41 @@ async function getFromKV(
 ): Promise<Heartbeat[]> {
   const key = `heartbeats:${userId}`;
   const heartbeats = await kv.get<StoredHeartbeat[]>(key, 'json') ?? [];
+
+  return heartbeats.filter((hb) => {
+    if (hb.timestamp < startTime || hb.timestamp > endTime) return false;
+    if (filters?.project && hb.project !== filters.project) return false;
+    if (filters?.tool && hb.tool !== filters.tool) return false;
+    return true;
+  });
+}
+
+function storeInMemory(heartbeats: Heartbeat[], userId: string): void {
+  const key = `heartbeats:${userId}`;
+  const existing = memoryStore.get(key) ?? [];
+
+  const newHeartbeats: StoredHeartbeat[] = heartbeats.map((hb, i) => ({
+    ...hb,
+    user_id: userId,
+    id: `${userId}-${hb.timestamp}-${i}`,
+  }));
+
+  const combined = [...existing, ...newHeartbeats];
+
+  const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const filtered = combined.filter((hb) => hb.timestamp > oneWeekAgo);
+
+  memoryStore.set(key, filtered);
+}
+
+function getFromMemory(
+  userId: string,
+  startTime: number,
+  endTime: number,
+  filters?: { project?: string; tool?: string }
+): Heartbeat[] {
+  const key = `heartbeats:${userId}`;
+  const heartbeats = memoryStore.get(key) ?? [];
 
   return heartbeats.filter((hb) => {
     if (hb.timestamp < startTime || hb.timestamp > endTime) return false;
