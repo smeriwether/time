@@ -279,7 +279,7 @@ The dashboard includes Playwright end-to-end tests that verify the full flow fro
 
 ```bash
 # Install Playwright browsers (first time only)
-npx playwright install chromium
+pnpm --filter @devtime/dashboard exec playwright install chromium
 
 # Run e2e tests (starts API and dashboard automatically)
 pnpm --filter @devtime/dashboard test:e2e
