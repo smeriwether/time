@@ -1,5 +1,11 @@
 import { formatDuration } from '@devtime/shared'
 
+const folderIcon = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+  </svg>
+)
+
 interface ProjectData {
   name: string
   seconds: number
@@ -20,9 +26,7 @@ export function ProjectList({ data }: ProjectListProps) {
           data.map((project, i) => (
             <div key={i} className="flex justify-between items-center" data-testid={`project-${project.name}`}>
               <div className="flex items-center gap-2 text-sm">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-                </svg>
+                {folderIcon}
                 {project.name}
               </div>
               <div className="text-sm font-medium text-accent-blue">{formatDuration(project.seconds)}</div>
