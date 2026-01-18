@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import type { StatsQuery } from '@devtime/shared'
 import { useStats } from './useStats'
 import { Header } from './components/Header'
@@ -27,13 +27,13 @@ function App() {
 
   const { data, loading, error } = useStats({ apiKey, range: period })
 
-  const byDay = transformByDay(data?.by_day)
-  const byTool = transformByTool(data?.by_tool)
-  const byLanguage = transformByLanguage(data?.by_language)
-  const byProject = transformByProject(data?.by_project)
+  const byDay = useMemo(() => transformByDay(data?.by_day), [data?.by_day])
+  const byTool = useMemo(() => transformByTool(data?.by_tool), [data?.by_tool])
+  const byLanguage = useMemo(() => transformByLanguage(data?.by_language), [data?.by_language])
+  const byProject = useMemo(() => transformByProject(data?.by_project), [data?.by_project])
 
   const totalSeconds = data?.total_seconds ?? 0
-  const dailyAverage = calculateDailyAverage(totalSeconds, byDay.length)
+  const dailyAverage = useMemo(() => calculateDailyAverage(totalSeconds, byDay.length), [totalSeconds, byDay.length])
 
   return (
     <div className="min-h-screen">
