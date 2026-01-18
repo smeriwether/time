@@ -1,17 +1,15 @@
 import { useState } from 'react'
 import type { StatsQuery } from '@devtime/shared'
 import { useStats } from './useStats'
-import {
-  Header,
-  PeriodSelector,
-  StatsGrid,
-  ActivityChart,
-  ToolBreakdown,
-  LanguageBreakdown,
-  ProjectList,
-  Footer,
-  Settings,
-} from './components'
+import { Header } from './components/Header'
+import { PeriodSelector } from './components/PeriodSelector'
+import { StatsGrid } from './components/StatsGrid'
+import { ActivityChart } from './components/ActivityChart'
+import { ToolBreakdown } from './components/ToolBreakdown'
+import { LanguageBreakdown } from './components/LanguageBreakdown'
+import { ProjectList } from './components/ProjectList'
+import { Footer } from './components/Footer'
+import { Settings } from './components/Settings'
 import {
   transformByDay,
   transformByTool,
