@@ -69,11 +69,21 @@ Configuration and data are stored in `~/.devtime/`:
 To build the plugin from source:
 
 ```bash
-npm install
-npm run build
+pnpm install
+pnpm build
 ```
 
 The bundled JavaScript is output to `lib/index.js`.
+
+### Testing locally
+
+Install from your local path instead of the marketplace:
+
+```bash
+/plugin install /path/to/packages/plugins/claude-code-marketplace
+```
+
+This lets you test changes without affecting end users who installed from the marketplace.
 
 ## License
 
