@@ -54,7 +54,7 @@ export const SessionSchema = z.object({
 export type Session = z.infer<typeof SessionSchema>;
 
 export const StatsQuerySchema = z.object({
-  range: z.enum(['today', 'week', 'month', 'year']).default('week'),
+  range: z.enum(['today', 'week']).default('week'),
   project: z.string().optional(),
   tool: z.string().optional(),
 });

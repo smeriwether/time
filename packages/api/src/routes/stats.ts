@@ -56,10 +56,6 @@ function getTimeRange(range: string): { startTime: number; endTime: number } {
       return { startTime: startOfDay.getTime(), endTime };
     case 'week':
       return { startTime: now - 7 * 24 * 60 * 60 * 1000, endTime };
-    case 'month':
-      return { startTime: now - 30 * 24 * 60 * 60 * 1000, endTime };
-    case 'year':
-      return { startTime: now - 365 * 24 * 60 * 60 * 1000, endTime };
     default:
       return { startTime: now - 7 * 24 * 60 * 60 * 1000, endTime };
   }
