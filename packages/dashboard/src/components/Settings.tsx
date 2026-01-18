@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { setStorageItem } from '../utils'
 
 interface SettingsProps {
   apiKey: string
@@ -20,7 +21,7 @@ export function Settings({ apiKey, onApiKeyChange, onClose }: SettingsProps) {
   const [copied, setCopied] = useState(false)
 
   const handleSave = () => {
-    localStorage.setItem('devtime_api_key', inputValue)
+    setStorageItem('devtime_api_key', inputValue)
     onApiKeyChange(inputValue)
     onClose()
   }

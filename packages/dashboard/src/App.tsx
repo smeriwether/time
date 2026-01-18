@@ -16,13 +16,14 @@ import {
   transformByLanguage,
   transformByProject,
   calculateDailyAverage,
+  getStorageItem,
 } from './utils'
 
 type Period = StatsQuery['range']
 
 function App() {
   const [period, setPeriod] = useState<Period>('week')
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('devtime_api_key') || 'dt_dev_key')
+  const [apiKey, setApiKey] = useState(() => getStorageItem('devtime_api_key', 'dt_dev_key'))
   const [showSettings, setShowSettings] = useState(false)
 
   const { data, loading, error } = useStats({ apiKey, range: period })
