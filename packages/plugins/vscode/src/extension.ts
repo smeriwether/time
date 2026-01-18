@@ -31,6 +31,10 @@ class DevTimeTracker {
 
   private readonly DEBOUNCE_MS = 50;
   private readonly MIN_HEARTBEAT_INTERVAL_MS = 30000; // 30 seconds minimum between heartbeats for same file
+  private readonly MAX_QUEUE_SIZE = 1000; // Prevent unbounded memory growth
+  private readonly FETCH_TIMEOUT_MS = 10000; // 10 second timeout for API calls
+  private consecutiveFailures: number = 0;
+  private readonly MAX_CONSECUTIVE_FAILURES = 5; // Stop logging after this many failures
 
   constructor(private context: vscode.ExtensionContext) {
     this.machineId = this.getMachineId();
@@ -168,6 +172,10 @@ class DevTimeTracker {
       cursor_line: editor?.selection.active.line,
     };
 
+    // Prevent unbounded queue growth - drop oldest if at max
+    if (this.heartbeatQueue.length >= this.MAX_QUEUE_SIZE) {
+      this.heartbeatQueue.shift();
+    }
     this.heartbeatQueue.push(heartbeat);
     this.lastHeartbeat = now;
     this.lastFile = filePath;
@@ -204,6 +212,10 @@ class DevTimeTracker {
     this.heartbeatQueue = [];
 
     try {
+      // Use AbortController for timeout - never hang indefinitely
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), this.FETCH_TIMEOUT_MS);
+
       const response = await fetch(`${apiEndpoint}/api/heartbeat/batch`, {
         method: 'POST',
         headers: {
@@ -211,17 +223,40 @@ class DevTimeTracker {
           'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify({ heartbeats }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
-        // Re-queue on failure
-        this.heartbeatQueue = [...heartbeats, ...this.heartbeatQueue];
-        console.error('DevTime: Failed to send heartbeats', response.status);
+        // Re-queue on failure (respecting max size)
+        this.requeue(heartbeats);
+        this.onSendFailure(`HTTP ${response.status}`);
+      } else {
+        // Success - reset failure counter
+        this.consecutiveFailures = 0;
       }
     } catch (error) {
-      // Re-queue on error
-      this.heartbeatQueue = [...heartbeats, ...this.heartbeatQueue];
-      console.error('DevTime: Error sending heartbeats', error);
+      // Re-queue on error (respecting max size)
+      this.requeue(heartbeats);
+      this.onSendFailure(error instanceof Error ? error.message : 'Unknown error');
+    }
+  }
+
+  private requeue(heartbeats: Heartbeat[]): void {
+    // Re-add to front of queue, but respect max size
+    const combined = [...heartbeats, ...this.heartbeatQueue];
+    this.heartbeatQueue = combined.slice(-this.MAX_QUEUE_SIZE);
+  }
+
+  private onSendFailure(reason: string): void {
+    this.consecutiveFailures++;
+    // Only log first few failures to avoid spamming console
+    if (this.consecutiveFailures <= this.MAX_CONSECUTIVE_FAILURES) {
+      console.error(`DevTime: Failed to send heartbeats (${reason})`);
+      if (this.consecutiveFailures === this.MAX_CONSECUTIVE_FAILURES) {
+        console.error('DevTime: Suppressing further error logs until success');
+      }
     }
   }
 
@@ -268,7 +303,9 @@ class DevTimeTracker {
   public dispose(): void {
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
     if (this.sendTimer) clearInterval(this.sendTimer);
-    this.sendHeartbeats(); // Send any remaining heartbeats
+    // Fire and forget - don't block VSCode shutdown
+    // Data loss is acceptable, user experience is not
+    this.sendHeartbeats().catch(() => {});
     this.statusBarItem.dispose();
   }
 }
