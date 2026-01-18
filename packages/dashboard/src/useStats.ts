@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import useSWR from 'swr';
 import { type StatsResponse, type StatsQuery, API_VERSION } from '@devtime/shared';
 
 interface UseStatsOptions {
@@ -13,44 +13,32 @@ interface UseStatsResult {
   refetch: () => void;
 }
 
+async function fetchStats([url, apiKey]: [string, string]): Promise<StatsResponse> {
+  const response = await fetch(url, {
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  return response.json() as Promise<StatsResponse>;
+}
+
 export function useStats({ apiKey, range }: UseStatsOptions): UseStatsResult {
-  const [data, setData] = useState<StatsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const url = `/api/${API_VERSION}/stats?range=${range}`;
 
-  const fetchStats = useCallback(async () => {
-    if (!apiKey) {
-      setError('No API key configured');
-      setLoading(false);
-      return;
-    }
+  const { data, error, isLoading, mutate } = useSWR(
+    apiKey ? [url, apiKey] : null,
+    fetchStats
+  );
 
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(`/api/${API_VERSION}/stats?range=${range}`, {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const stats = await response.json() as StatsResponse;
-      setData(stats);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setLoading(false);
-    }
-  }, [apiKey, range]);
-
-  useEffect(() => {
-    fetchStats();
-  }, [fetchStats]);
-
-  return { data, loading, error, refetch: fetchStats };
+  return {
+    data: data ?? null,
+    loading: isLoading,
+    error: !apiKey ? 'No API key configured' : (error?.message ?? null),
+    refetch: () => mutate(),
+  };
 }
