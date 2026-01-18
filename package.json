@@ -8,9 +8,11 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
-    "clean": "turbo run clean"
+    "clean": "turbo run clean",
+    "seed": "tsx scripts/seed.ts"
   },
   "devDependencies": {
+    "tsx": "^4.7.0",
     "turbo": "^2.0.0",
     "typescript": "^5.3.0"
   },

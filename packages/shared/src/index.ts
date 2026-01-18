@@ -198,12 +198,13 @@ export function aggregateByDay(
 ): DayStats[] {
   const dayMap = new Map<string, number>();
 
+  // Use UTC to avoid timezone issues
   let current = new Date(startTime);
-  current.setHours(0, 0, 0, 0);
+  current.setUTCHours(0, 0, 0, 0);
 
   while (current.getTime() <= endTime) {
     dayMap.set(current.toISOString().split('T')[0], 0);
-    current.setDate(current.getDate() + 1);
+    current.setUTCDate(current.getUTCDate() + 1);
   }
 
   const sorted = [...heartbeats].sort((a, b) => a.timestamp - b.timestamp);
