@@ -47,7 +47,8 @@ export function Settings({ apiKey, onApiKeyChange, onClose }: SettingsProps) {
         <h2 className="text-xl font-semibold">Settings</h2>
         <button
           onClick={onClose}
-          className="text-text-secondary hover:text-text-primary transition-colors"
+          aria-label="Close settings"
+          className="text-text-secondary hover:text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-secondary rounded"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="18" y1="6" x2="6" y2="18" />
@@ -62,15 +63,17 @@ export function Settings({ apiKey, onApiKeyChange, onClose }: SettingsProps) {
           <div className="flex gap-2">
             <input
               type="text"
+              name="apiKey"
+              autoComplete="off"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="dt_your_api_key_here"
-              className="flex-1 bg-bg-tertiary border border-border rounded-lg px-4 py-2 text-sm font-mono focus:outline-none focus:border-accent-blue"
+              className="flex-1 bg-bg-tertiary border border-border rounded-lg px-4 py-2 text-sm font-mono focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-secondary"
             />
             <button
               onClick={handleCopy}
-              className="px-3 py-2 bg-bg-tertiary border border-border rounded-lg hover:border-text-secondary transition-colors"
-              title="Copy to clipboard"
+              aria-label={copied ? "Copied" : "Copy to clipboard"}
+              className="px-3 py-2 bg-bg-tertiary border border-border rounded-lg hover:border-text-secondary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-secondary"
             >
               {copied ? (
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -105,7 +108,7 @@ export function Settings({ apiKey, onApiKeyChange, onClose }: SettingsProps) {
         <div className="flex gap-2">
           <button
             onClick={handleGenerate}
-            className="px-4 py-2 bg-bg-tertiary border border-border rounded-lg text-sm hover:border-text-secondary transition-colors"
+            className="px-4 py-2 bg-bg-tertiary border border-border rounded-lg text-sm hover:border-text-secondary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-secondary"
           >
             Generate New Key
           </button>
@@ -121,14 +124,14 @@ export function Settings({ apiKey, onApiKeyChange, onClose }: SettingsProps) {
       <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-border">
         <button
           onClick={onClose}
-          className="px-4 py-2 text-sm text-text-secondary hover:text-text-primary transition-colors"
+          className="px-4 py-2 text-sm text-text-secondary hover:text-text-primary transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-secondary"
         >
           Cancel
         </button>
         <button
           onClick={handleSave}
           disabled={!isValidFormat}
-          className="px-4 py-2 bg-accent-blue text-white rounded-lg text-sm hover:bg-accent-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 bg-accent-blue text-white rounded-lg text-sm hover:bg-accent-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-secondary"
         >
           Save
         </button>

@@ -46,7 +46,7 @@ export function BreakdownList({
             </div>
             <div className="h-2 bg-bg-tertiary rounded overflow-hidden">
               <div
-                className="h-full rounded transition-all duration-300"
+                className="h-full rounded transition-[width] duration-300"
                 style={{
                   width: `${(item.value / maxValue) * 100}%`,
                   backgroundColor: item.color ?? '#666',

@@ -11,7 +11,7 @@ export function Modal({ children, className }: ModalProps) {
     .join(' ')
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overscroll-contain">
       <div className={classes} role="dialog" aria-modal="true">
         {children}
       </div>

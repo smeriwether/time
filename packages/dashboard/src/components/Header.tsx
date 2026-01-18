@@ -15,10 +15,15 @@ export function Header({ onSettingsClick }: HeaderProps) {
         <span className="text-xl font-semibold">DevTime</span>
       </div>
       <nav className="flex gap-6">
-        <a href="#" className="text-sm text-text-primary hover:text-text-primary transition-colors">Dashboard</a>
+        <button
+          aria-current="page"
+          className="text-sm text-text-primary transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-secondary"
+        >
+          Dashboard
+        </button>
         <button
           onClick={onSettingsClick}
-          className="text-sm text-text-secondary hover:text-text-primary transition-colors"
+          className="text-sm text-text-secondary hover:text-text-primary transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-secondary"
         >
           Settings
         </button>

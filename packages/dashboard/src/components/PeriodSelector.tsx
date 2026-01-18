@@ -15,7 +15,7 @@ export function PeriodSelector({ period, onChange }: PeriodSelectorProps) {
       {periods.map(p => (
         <button
           key={p}
-          className={`px-4 py-2 rounded-md text-sm transition-all ${
+          className={`px-4 py-2 rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary ${
             period === p
               ? 'bg-accent-blue text-white border border-accent-blue'
               : 'bg-bg-secondary text-text-secondary border border-border hover:border-text-secondary'
