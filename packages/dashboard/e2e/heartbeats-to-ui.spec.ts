@@ -158,15 +158,15 @@ test.describe('Heartbeats to UI', () => {
     // Should reload and show today's stats
     await expect(page.getByText('Loading stats...')).not.toBeVisible({ timeout: 10000 });
 
-    // Click "Month" button
-    await page.getByRole('button', { name: 'Month' }).click();
+    // Click "Week" button
+    await page.getByRole('button', { name: 'Week' }).click();
 
-    // Should reload with month stats
+    // Should reload with week stats
     await expect(page.getByText('Loading stats...')).not.toBeVisible({ timeout: 10000 });
 
     // The buttons should have correct active state
-    const monthButton = page.getByRole('button', { name: 'Month' });
-    await expect(monthButton).toHaveClass(/bg-accent-blue/);
+    const weekButton = page.getByRole('button', { name: 'Week' });
+    await expect(weekButton).toHaveClass(/bg-accent-blue/);
   });
 
   test('displays empty state when no heartbeats', async ({ page }) => {
