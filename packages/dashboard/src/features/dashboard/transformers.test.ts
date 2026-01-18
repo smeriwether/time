@@ -6,9 +6,8 @@ import {
   transformByLanguage,
   transformByProject,
   calculateDailyAverage,
-  TOOL_COLORS,
-  LANG_COLORS,
-} from './utils'
+} from './transformers'
+import { TOOL_COLORS, LANG_COLORS } from './constants'
 
 describe('getDayLabel', () => {
   it('returns "Today" for today\'s date', () => {

@@ -1,4 +1,6 @@
 import { formatDuration } from '@devtime/shared'
+import { Panel } from '../../../components/ui/Panel'
+import type { ProjectDisplayData } from '../types'
 
 const folderIcon = (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -6,18 +8,13 @@ const folderIcon = (
   </svg>
 )
 
-interface ProjectData {
-  name: string
-  seconds: number
+interface ProjectListCardProps {
+  data: ProjectDisplayData[]
 }
 
-interface ProjectListProps {
-  data: ProjectData[]
-}
-
-export function ProjectList({ data }: ProjectListProps) {
+export function ProjectListCard({ data }: ProjectListCardProps) {
   return (
-    <div className="bg-bg-secondary border border-border rounded-xl p-6">
+    <Panel>
       <h3 className="text-base font-semibold mb-5">Top Projects</h3>
       <div className="flex flex-col gap-4" data-testid="by-project">
         {data.length === 0 ? (
@@ -34,6 +31,6 @@ export function ProjectList({ data }: ProjectListProps) {
           ))
         )}
       </div>
-    </div>
+    </Panel>
   )
 }

@@ -1,23 +1,16 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import type { StatsQuery } from '@devtime/shared'
-import { useStats } from './useStats'
 import { Header } from './components/Header'
 import { PeriodSelector } from './components/PeriodSelector'
-import { StatsGrid } from './components/StatsGrid'
-import { ActivityChart } from './components/ActivityChart'
-import { ToolBreakdown } from './components/ToolBreakdown'
-import { LanguageBreakdown } from './components/LanguageBreakdown'
-import { ProjectList } from './components/ProjectList'
 import { Footer } from './components/Footer'
 import { Settings } from './components/Settings'
-import {
-  transformByDay,
-  transformByTool,
-  transformByLanguage,
-  transformByProject,
-  calculateDailyAverage,
-  getStorageItem,
-} from './utils'
+import { ActivityCard } from './features/dashboard/components/ActivityCard'
+import { LanguageBreakdownCard } from './features/dashboard/components/LanguageBreakdownCard'
+import { ProjectListCard } from './features/dashboard/components/ProjectListCard'
+import { StatsGrid } from './features/dashboard/components/StatsGrid'
+import { ToolBreakdownCard } from './features/dashboard/components/ToolBreakdownCard'
+import { useDashboardViewModel } from './features/dashboard/hooks/useDashboardViewModel'
+import { getStorageItem } from './lib/storage'
 
 type Period = StatsQuery['range']
 
@@ -26,15 +19,15 @@ function App() {
   const [apiKey, setApiKey] = useState(() => getStorageItem('devtime_api_key', 'dt_dev_key'))
   const [showSettings, setShowSettings] = useState(false)
 
-  const { data, loading, error } = useStats({ apiKey, range: period })
-
-  const byDay = useMemo(() => transformByDay(data?.by_day), [data?.by_day])
-  const byTool = useMemo(() => transformByTool(data?.by_tool), [data?.by_tool])
-  const byLanguage = useMemo(() => transformByLanguage(data?.by_language), [data?.by_language])
-  const byProject = useMemo(() => transformByProject(data?.by_project), [data?.by_project])
-
-  const totalSeconds = data?.total_seconds ?? 0
-  const dailyAverage = useMemo(() => calculateDailyAverage(totalSeconds, byDay.length), [totalSeconds, byDay.length])
+  const {
+    loading,
+    error,
+    summary,
+    activity,
+    tools,
+    languages,
+    projects,
+  } = useDashboardViewModel({ apiKey, range: period })
 
   return (
     <div className="min-h-screen">
@@ -55,21 +48,16 @@ function App() {
 
         {!loading && !error && (
           <>
-            <StatsGrid
-              totalSeconds={totalSeconds}
-              dailyAverage={dailyAverage}
-              toolCount={byTool.length}
-              projectCount={byProject.length}
-            />
+            <StatsGrid summary={summary} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-              <ActivityChart data={byDay} />
-              <ToolBreakdown data={byTool} />
+              <ActivityCard data={activity} />
+              <ToolBreakdownCard data={tools} />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <LanguageBreakdown data={byLanguage} />
-              <ProjectList data={byProject} />
+              <LanguageBreakdownCard data={languages} />
+              <ProjectListCard data={projects} />
             </div>
           </>
         )}
