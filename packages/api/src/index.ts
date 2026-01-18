@@ -34,6 +34,19 @@ app.get('/health', (c) => {
   return c.json({ status: 'ok', timestamp: Date.now() });
 });
 
+app.get(`/${API_VERSION}/docs`, (c) => {
+  return c.json({
+    version: API_VERSION,
+    auth: { header: 'Authorization: Bearer dt_...' },
+    endpoints: [
+      { method: 'POST', path: `/${API_VERSION}/heartbeat`, description: 'Send a single heartbeat' },
+      { method: 'POST', path: `/${API_VERSION}/heartbeat/batch`, description: 'Send multiple heartbeats' },
+      { method: 'GET', path: `/${API_VERSION}/stats`, description: 'Get aggregated stats' },
+    ],
+    stats: { ranges: ['today', 'week', 'month', 'year'] },
+  });
+});
+
 // Test-only endpoint to reset in-memory store (only available in development)
 app.post('/test/reset', (c) => {
   if (c.env?.ENVIRONMENT !== 'development') {

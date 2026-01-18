@@ -128,7 +128,7 @@ curl https://api.devtime.dev/v1/stats?range=week \
 ```
 
 Query parameters:
-- `range`: `today`, `week`, `month`, or `year` (default: `week`)
+- `range`: `today`, `week`, `month`, or `year` (default: `week`, month/year are rolling windows)
 - `project`: Filter by project name
 - `tool`: Filter by tool name
 
@@ -166,16 +166,18 @@ Response:
 ```bash
 cd packages/api
 
-# Local development
+# Local development (uses development environment)
 pnpm dev
 
-# Deploy to Cloudflare
+# Deploy to Cloudflare (uses production environment)
 pnpm deploy
 ```
 
-Configure Cloudflare secrets:
+Configure Cloudflare KV for API keys:
 ```bash
-wrangler secret put API_KEYS  # KV namespace binding
+wrangler kv:namespace create API_KEYS
+# Add the binding id to wrangler.toml, then create keys:
+# wrangler kv:key put --binding API_KEYS "dt_xxx" "user-id"
 ```
 
 ## Development

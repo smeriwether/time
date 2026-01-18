@@ -20,13 +20,17 @@ function testRequest(path: string, init?: RequestInit) {
   return app.request(path, init, testEnv);
 }
 
+async function readJson<T>(res: Response): Promise<T> {
+  return (await res.json()) as T;
+}
+
 describe('API Integration', () => {
   describe('GET /', () => {
     it('returns API info', async () => {
       const res = await testRequest('/');
       expect(res.status).toBe(200);
 
-      const body = await res.json();
+      const body = await readJson<{ name: string; version: string }>(res);
       expect(body.name).toBe('DevTime API');
       expect(body.version).toBe('v1');
     });
@@ -37,7 +41,7 @@ describe('API Integration', () => {
       const res = await testRequest('/health');
       expect(res.status).toBe(200);
 
-      const body = await res.json();
+      const body = await readJson<{ status: string; timestamp: number }>(res);
       expect(body.status).toBe('ok');
       expect(body.timestamp).toBeDefined();
     });
@@ -93,7 +97,7 @@ describe('API Integration', () => {
 
       expect(res.status).toBe(200);
 
-      const body = await res.json();
+      const body = await readJson<{ ok: boolean; received: number }>(res);
       expect(body.ok).toBe(true);
       expect(body.received).toBe(1);
     });
@@ -110,7 +114,7 @@ describe('API Integration', () => {
 
       expect(res.status).toBe(400);
 
-      const body = await res.json();
+      const body = await readJson<{ code: string }>(res);
       expect(body.code).toBe('VALIDATION_ERROR');
     });
 
@@ -146,7 +150,7 @@ describe('API Integration', () => {
 
       expect(res.status).toBe(200);
 
-      const body = await res.json();
+      const body = await readJson<{ ok: boolean; received: number }>(res);
       expect(body.ok).toBe(true);
       expect(body.received).toBe(2);
     });
@@ -173,7 +177,7 @@ describe('API Integration', () => {
 
       expect(res.status).toBe(200);
 
-      const body = await res.json();
+      const body = await readJson<Record<string, unknown>>(res);
       expect(body).toHaveProperty('total_seconds');
       expect(body).toHaveProperty('by_tool');
       expect(body).toHaveProperty('by_project');
@@ -203,7 +207,7 @@ describe('API Integration', () => {
       const res = await testRequest('/unknown-route');
       expect(res.status).toBe(404);
 
-      const body = await res.json();
+      const body = await readJson<{ error: string }>(res);
       expect(body.error).toBe('Not found');
     });
 

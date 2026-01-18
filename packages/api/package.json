@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "dev": "wrangler dev --env development",
+    "deploy": "wrangler deploy --env production",
     "test": "vitest run",
     "test:watch": "vitest",
     "cf-typegen": "wrangler types"

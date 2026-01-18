@@ -48,14 +48,18 @@ function getTimeRange(range: string): { startTime: number; endTime: number } {
   const now = Date.now();
   const endTime = now;
 
-  const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
+  const startOfDayUtc = new Date(now);
+  startOfDayUtc.setUTCHours(0, 0, 0, 0);
 
   switch (range) {
     case 'today':
-      return { startTime: startOfDay.getTime(), endTime };
+      return { startTime: startOfDayUtc.getTime(), endTime };
     case 'week':
       return { startTime: now - 7 * 24 * 60 * 60 * 1000, endTime };
+    case 'month':
+      return { startTime: now - 30 * 24 * 60 * 60 * 1000, endTime };
+    case 'year':
+      return { startTime: now - 365 * 24 * 60 * 60 * 1000, endTime };
     default:
       return { startTime: now - 7 * 24 * 60 * 60 * 1000, endTime };
   }

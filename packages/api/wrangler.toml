@@ -7,9 +7,9 @@ compatibility_flags = ["nodejs_compat"]
 [dev]
 port = 8787
 
-# Default is development for local dev, overridden per-environment for deploys
+# Default to production to avoid accidental dev-key exposure on deploys
 [vars]
-ENVIRONMENT = "development"
+ENVIRONMENT = "production"
 
 # KV namespace for storing heartbeats (used before DB migration)
 # [[kv_namespaces]]
@@ -25,6 +25,10 @@ ENVIRONMENT = "development"
 # Production environment (for `wrangler deploy --env production`)
 [env.production]
 vars = { ENVIRONMENT = "production" }
+
+# Development environment (for `wrangler dev --env development`)
+[env.development]
+vars = { ENVIRONMENT = "development" }
 
 # Staging environment
 [env.staging]

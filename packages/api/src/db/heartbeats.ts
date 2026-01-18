@@ -6,6 +6,8 @@ interface StoredHeartbeat extends Heartbeat {
   id: string;
 }
 
+const D1_BATCH_SIZE = 50;
+
 // In-memory storage for development/testing when no DB or KV is configured
 const memoryStore = new Map<string, StoredHeartbeat[]>();
 
@@ -75,7 +77,9 @@ async function storeInD1(
     )
   );
 
-  await db.batch(batch);
+  for (let i = 0; i < batch.length; i += D1_BATCH_SIZE) {
+    await db.batch(batch.slice(i, i + D1_BATCH_SIZE));
+  }
 }
 
 async function getFromD1(
