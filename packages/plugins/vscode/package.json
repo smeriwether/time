@@ -1,0 +1,71 @@
+{
+  "name": "devtime-vscode",
+  "displayName": "DevTime",
+  "description": "Track your coding time across projects and languages",
+  "version": "0.1.0",
+  "publisher": "devtime",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "devtime.showStatus",
+        "title": "DevTime: Show Today's Status"
+      },
+      {
+        "command": "devtime.openDashboard",
+        "title": "DevTime: Open Dashboard"
+      },
+      {
+        "command": "devtime.toggleTracking",
+        "title": "DevTime: Toggle Tracking"
+      }
+    ],
+    "configuration": {
+      "title": "DevTime",
+      "properties": {
+        "devtime.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable activity tracking"
+        },
+        "devtime.apiEndpoint": {
+          "type": "string",
+          "default": "https://api.devtime.dev",
+          "description": "API endpoint for sending heartbeats"
+        },
+        "devtime.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Your DevTime API key"
+        },
+        "devtime.heartbeatInterval": {
+          "type": "number",
+          "default": 120,
+          "description": "Seconds between heartbeats (minimum 30)"
+        },
+        "devtime.excludeProjects": {
+          "type": "array",
+          "default": [],
+          "description": "Project names to exclude from tracking"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
+    "watch": "npm run build -- --watch",
+    "package": "vsce package",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.74.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.0"
+  }
+}

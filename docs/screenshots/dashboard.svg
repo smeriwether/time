@@ -1,0 +1,214 @@
+<svg width="1200" height="900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="barGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#58a6ff"/>
+      <stop offset="100%" style="stop-color:#a371f7"/>
+    </linearGradient>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#58a6ff"/>
+      <stop offset="100%" style="stop-color:#a371f7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="900" fill="#0d1117"/>
+
+  <!-- Header -->
+  <rect width="1200" height="60" fill="#161b22"/>
+  <line x1="0" y1="60" x2="1200" y2="60" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Logo -->
+  <rect x="24" y="14" width="32" height="32" rx="8" fill="url(#logoGrad)"/>
+  <circle cx="40" cy="30" r="10" stroke="white" stroke-width="2" fill="none"/>
+  <polyline points="40,24 40,30 44,32" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <text x="66" y="38" font-family="system-ui, sans-serif" font-size="20" font-weight="600" fill="#e6edf3">DevTime</text>
+
+  <!-- Nav -->
+  <text x="900" y="38" font-family="system-ui, sans-serif" font-size="14" fill="#e6edf3">Dashboard</text>
+  <text x="990" y="38" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e">Projects</text>
+  <text x="1060" y="38" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e">Goals</text>
+  <text x="1115" y="38" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e">Settings</text>
+
+  <!-- Period buttons -->
+  <rect x="24" y="92" width="60" height="32" rx="6" fill="#161b22" stroke="#30363d"/>
+  <text x="38" y="113" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e">Today</text>
+
+  <rect x="92" y="92" width="60" height="32" rx="6" fill="#58a6ff"/>
+  <text x="106" y="113" font-family="system-ui, sans-serif" font-size="14" fill="white">Week</text>
+
+  <rect x="160" y="92" width="60" height="32" rx="6" fill="#161b22" stroke="#30363d"/>
+  <text x="172" y="113" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e">Month</text>
+
+  <rect x="228" y="92" width="60" height="32" rx="6" fill="#161b22" stroke="#30363d"/>
+  <text x="246" y="113" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e">Year</text>
+
+  <!-- Stats cards -->
+  <!-- Card 1 -->
+  <rect x="24" y="140" width="280" height="100" rx="12" fill="#161b22" stroke="#30363d"/>
+  <text x="44" y="168" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e">TOTAL TIME</text>
+  <text x="44" y="208" font-family="system-ui, sans-serif" font-size="32" font-weight="600" fill="#e6edf3">35h 30m</text>
+  <text x="44" y="228" font-family="system-ui, sans-serif" font-size="12" fill="#3fb950">+12% from last week</text>
+
+  <!-- Card 2 -->
+  <rect x="320" y="140" width="280" height="100" rx="12" fill="#161b22" stroke="#30363d"/>
+  <text x="340" y="168" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e">DAILY AVERAGE</text>
+  <text x="340" y="208" font-family="system-ui, sans-serif" font-size="32" font-weight="600" fill="#e6edf3">5h 4m</text>
+  <text x="340" y="228" font-family="system-ui, sans-serif" font-size="12" fill="#3fb950">+8% from last week</text>
+
+  <!-- Card 3 -->
+  <rect x="616" y="140" width="280" height="100" rx="12" fill="#161b22" stroke="#30363d"/>
+  <text x="636" y="168" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e">CURRENT STREAK</text>
+  <text x="636" y="208" font-family="system-ui, sans-serif" font-size="32" font-weight="600" fill="#e6edf3">14 days</text>
+  <text x="636" y="228" font-family="system-ui, sans-serif" font-size="12" fill="#3fb950">Personal best!</text>
+
+  <!-- Card 4 -->
+  <rect x="912" y="140" width="264" height="100" rx="12" fill="#161b22" stroke="#30363d"/>
+  <text x="932" y="168" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e">PROJECTS ACTIVE</text>
+  <text x="932" y="208" font-family="system-ui, sans-serif" font-size="32" font-weight="600" fill="#e6edf3">5</text>
+  <text x="932" y="228" font-family="system-ui, sans-serif" font-size="12" fill="#3fb950">2 new this week</text>
+
+  <!-- Activity Chart Card -->
+  <rect x="24" y="260" width="760" height="280" rx="12" fill="#161b22" stroke="#30363d"/>
+  <text x="44" y="292" font-family="system-ui, sans-serif" font-size="16" font-weight="600" fill="#e6edf3">Activity This Week</text>
+
+  <!-- Bar chart -->
+  <rect x="70" y="420" width="80" height="60" rx="4" fill="url(#barGrad)"/>
+  <text x="95" y="500" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e" text-anchor="middle">Sun</text>
+
+  <rect x="170" y="340" width="80" height="140" rx="4" fill="url(#barGrad)"/>
+  <text x="195" y="500" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e" text-anchor="middle">Mon</text>
+
+  <rect x="270" y="320" width="80" height="160" rx="4" fill="url(#barGrad)"/>
+  <text x="295" y="500" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e" text-anchor="middle">Tue</text>
+
+  <rect x="370" y="360" width="80" height="120" rx="4" fill="url(#barGrad)"/>
+  <text x="395" y="500" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e" text-anchor="middle">Wed</text>
+
+  <rect x="470" y="380" width="80" height="100" rx="4" fill="url(#barGrad)"/>
+  <text x="495" y="500" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e" text-anchor="middle">Thu</text>
+
+  <rect x="570" y="400" width="80" height="80" rx="4" fill="url(#barGrad)"/>
+  <text x="595" y="500" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e" text-anchor="middle">Fri</text>
+
+  <rect x="670" y="430" width="80" height="50" rx="4" fill="url(#barGrad)"/>
+  <text x="695" y="500" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e" text-anchor="middle">Today</text>
+
+  <!-- By Tool Card -->
+  <rect x="800" y="260" width="376" height="280" rx="12" fill="#161b22" stroke="#30363d"/>
+  <text x="820" y="292" font-family="system-ui, sans-serif" font-size="16" font-weight="600" fill="#e6edf3">By Tool</text>
+
+  <!-- VS Code -->
+  <rect x="820" y="315" width="24" height="24" rx="4" fill="#007ACC"/>
+  <text x="832" y="333" font-family="system-ui, sans-serif" font-size="10" fill="white" text-anchor="middle">VS</text>
+  <text x="854" y="332" font-family="system-ui, sans-serif" font-size="14" fill="#e6edf3">VS Code</text>
+  <text x="1130" y="332" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e" text-anchor="end">20h</text>
+  <rect x="820" y="345" width="336" height="8" rx="4" fill="#21262d"/>
+  <rect x="820" y="345" width="336" height="8" rx="4" fill="#007ACC"/>
+
+  <!-- Claude Code -->
+  <rect x="820" y="375" width="24" height="24" rx="4" fill="#D97757"/>
+  <text x="832" y="393" font-family="system-ui, sans-serif" font-size="10" fill="white" text-anchor="middle">CC</text>
+  <text x="854" y="392" font-family="system-ui, sans-serif" font-size="14" fill="#e6edf3">Claude Code</text>
+  <text x="1130" y="392" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e" text-anchor="end">10h</text>
+  <rect x="820" y="405" width="336" height="8" rx="4" fill="#21262d"/>
+  <rect x="820" y="405" width="168" height="8" rx="4" fill="#D97757"/>
+
+  <!-- Zed -->
+  <rect x="820" y="435" width="24" height="24" rx="4" fill="#F5A623"/>
+  <text x="832" y="453" font-family="system-ui, sans-serif" font-size="10" fill="white" text-anchor="middle">Z</text>
+  <text x="854" y="452" font-family="system-ui, sans-serif" font-size="14" fill="#e6edf3">Zed</text>
+  <text x="1130" y="452" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e" text-anchor="end">4h</text>
+  <rect x="820" y="465" width="336" height="8" rx="4" fill="#21262d"/>
+  <rect x="820" y="465" width="67" height="8" rx="4" fill="#F5A623"/>
+
+  <!-- Codex -->
+  <rect x="820" y="495" width="24" height="24" rx="4" fill="#10a37f"/>
+  <text x="832" y="513" font-family="system-ui, sans-serif" font-size="10" fill="white" text-anchor="middle">CX</text>
+  <text x="854" y="512" font-family="system-ui, sans-serif" font-size="14" fill="#e6edf3">Codex</text>
+  <text x="1130" y="512" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e" text-anchor="end">1h 30m</text>
+  <rect x="820" y="525" width="336" height="8" rx="4" fill="#21262d"/>
+  <rect x="820" y="525" width="25" height="8" rx="4" fill="#10a37f"/>
+
+  <!-- Languages Card -->
+  <rect x="24" y="560" width="565" height="280" rx="12" fill="#161b22" stroke="#30363d"/>
+  <text x="44" y="592" font-family="system-ui, sans-serif" font-size="16" font-weight="600" fill="#e6edf3">By Language</text>
+
+  <!-- TypeScript -->
+  <rect x="44" y="615" width="24" height="24" rx="4" fill="#3178c6"/>
+  <text x="56" y="633" font-family="system-ui, sans-serif" font-size="10" fill="white" text-anchor="middle">TS</text>
+  <text x="78" y="632" font-family="system-ui, sans-serif" font-size="14" fill="#e6edf3">TypeScript</text>
+  <text x="545" y="632" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e" text-anchor="end">15h</text>
+  <rect x="44" y="645" width="501" height="8" rx="4" fill="#21262d"/>
+  <rect x="44" y="645" width="501" height="8" rx="4" fill="#3178c6"/>
+
+  <!-- Python -->
+  <rect x="44" y="670" width="24" height="24" rx="4" fill="#3776ab"/>
+  <text x="56" y="688" font-family="system-ui, sans-serif" font-size="10" fill="white" text-anchor="middle">PY</text>
+  <text x="78" y="687" font-family="system-ui, sans-serif" font-size="14" fill="#e6edf3">Python</text>
+  <text x="545" y="687" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e" text-anchor="end">8h</text>
+  <rect x="44" y="700" width="501" height="8" rx="4" fill="#21262d"/>
+  <rect x="44" y="700" width="267" height="8" rx="4" fill="#3776ab"/>
+
+  <!-- Rust -->
+  <rect x="44" y="725" width="24" height="24" rx="4" fill="#dea584"/>
+  <text x="56" y="743" font-family="system-ui, sans-serif" font-size="10" fill="#000" text-anchor="middle">RS</text>
+  <text x="78" y="742" font-family="system-ui, sans-serif" font-size="14" fill="#e6edf3">Rust</text>
+  <text x="545" y="742" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e" text-anchor="end">6h</text>
+  <rect x="44" y="755" width="501" height="8" rx="4" fill="#21262d"/>
+  <rect x="44" y="755" width="200" height="8" rx="4" fill="#dea584"/>
+
+  <!-- Go -->
+  <rect x="44" y="780" width="24" height="24" rx="4" fill="#00ADD8"/>
+  <text x="56" y="798" font-family="system-ui, sans-serif" font-size="10" fill="white" text-anchor="middle">GO</text>
+  <text x="78" y="797" font-family="system-ui, sans-serif" font-size="14" fill="#e6edf3">Go</text>
+  <text x="545" y="797" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e" text-anchor="end">4h</text>
+  <rect x="44" y="810" width="501" height="8" rx="4" fill="#21262d"/>
+  <rect x="44" y="810" width="134" height="8" rx="4" fill="#00ADD8"/>
+
+  <!-- Recent Activity Card -->
+  <rect x="610" y="560" width="566" height="280" rx="12" fill="#161b22" stroke="#30363d"/>
+  <text x="630" y="592" font-family="system-ui, sans-serif" font-size="16" font-weight="600" fill="#e6edf3">Recent Activity</text>
+
+  <!-- Activity 1 -->
+  <text x="630" y="632" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e">2:30 PM</text>
+  <rect x="700" y="615" width="28" height="28" rx="6" fill="#007ACC"/>
+  <text x="714" y="635" font-family="system-ui, sans-serif" font-size="10" fill="white" text-anchor="middle">VS</text>
+  <text x="740" y="628" font-family="system-ui, sans-serif" font-size="14" fill="#e6edf3">App.tsx</text>
+  <text x="740" y="646" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e">devtime</text>
+  <text x="1130" y="635" font-family="system-ui, sans-serif" font-size="14" fill="#3fb950" text-anchor="end">30m</text>
+
+  <line x1="630" y1="660" x2="1150" y2="660" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Activity 2 -->
+  <text x="630" y="692" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e">1:00 PM</text>
+  <rect x="700" y="675" width="28" height="28" rx="6" fill="#D97757"/>
+  <text x="714" y="695" font-family="system-ui, sans-serif" font-size="10" fill="white" text-anchor="middle">CC</text>
+  <text x="740" y="688" font-family="system-ui, sans-serif" font-size="14" fill="#e6edf3">extension.ts</text>
+  <text x="740" y="706" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e">devtime</text>
+  <text x="1130" y="695" font-family="system-ui, sans-serif" font-size="14" fill="#3fb950" text-anchor="end">45m</text>
+
+  <line x1="630" y1="720" x2="1150" y2="720" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Activity 3 -->
+  <text x="630" y="752" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e">11:30 AM</text>
+  <rect x="700" y="735" width="28" height="28" rx="6" fill="#007ACC"/>
+  <text x="714" y="755" font-family="system-ui, sans-serif" font-size="10" fill="white" text-anchor="middle">VS</text>
+  <text x="740" y="748" font-family="system-ui, sans-serif" font-size="14" fill="#e6edf3">main.rs</text>
+  <text x="740" y="766" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e">api-server</text>
+  <text x="1130" y="755" font-family="system-ui, sans-serif" font-size="14" fill="#3fb950" text-anchor="end">1h</text>
+
+  <line x1="630" y1="780" x2="1150" y2="780" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Activity 4 -->
+  <text x="630" y="812" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e">10:00 AM</text>
+  <rect x="700" y="795" width="28" height="28" rx="6" fill="#F5A623"/>
+  <text x="714" y="815" font-family="system-ui, sans-serif" font-size="10" fill="white" text-anchor="middle">Z</text>
+  <text x="740" y="808" font-family="system-ui, sans-serif" font-size="14" fill="#e6edf3">train.py</text>
+  <text x="740" y="826" font-family="system-ui, sans-serif" font-size="12" fill="#8b949e">ml-pipeline</text>
+  <text x="1130" y="815" font-family="system-ui, sans-serif" font-size="14" fill="#3fb950" text-anchor="end">40m</text>
+
+  <!-- Footer -->
+  <rect x="0" y="860" width="1200" height="40" fill="#0d1117"/>
+  <line x1="0" y1="860" x2="1200" y2="860" stroke="#30363d" stroke-width="1"/>
+  <text x="600" y="885" font-family="system-ui, sans-serif" font-size="14" fill="#8b949e" text-anchor="middle">DevTime is open source. View on GitHub</text>
+</svg>
