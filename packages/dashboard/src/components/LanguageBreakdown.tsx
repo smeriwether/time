@@ -1,4 +1,5 @@
 import { formatDuration } from '@devtime/shared'
+import { getMaxSeconds } from '../utils'
 
 interface LanguageData {
   name: string
@@ -11,7 +12,7 @@ interface LanguageBreakdownProps {
 }
 
 export function LanguageBreakdown({ data }: LanguageBreakdownProps) {
-  const maxSeconds = Math.max(...data.map(l => l.seconds), 1)
+  const maxSeconds = getMaxSeconds(data)
 
   return (
     <div className="bg-bg-secondary border border-border rounded-xl p-6">

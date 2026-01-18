@@ -137,3 +137,14 @@ export function transformByProject(
 export function calculateDailyAverage(totalSeconds: number, dayCount: number): number {
   return dayCount > 0 ? Math.round(totalSeconds / dayCount) : 0
 }
+
+export function getMaxSeconds<T extends { seconds: number }>(items: T[], defaultValue = 1): number {
+  if (items.length === 0) return defaultValue
+  let max = items[0].seconds
+  for (let i = 1; i < items.length; i++) {
+    if (items[i].seconds > max) {
+      max = items[i].seconds
+    }
+  }
+  return max || defaultValue
+}

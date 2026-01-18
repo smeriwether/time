@@ -1,4 +1,5 @@
 import { formatDuration } from '@devtime/shared'
+import { getMaxSeconds } from '../utils'
 
 interface DayData {
   date: string
@@ -11,7 +12,7 @@ interface ActivityChartProps {
 }
 
 export function ActivityChart({ data }: ActivityChartProps) {
-  const maxSeconds = Math.max(...data.map(d => d.seconds), 1)
+  const maxSeconds = getMaxSeconds(data)
 
   return (
     <div className="lg:col-span-2 bg-bg-secondary border border-border rounded-xl p-6">

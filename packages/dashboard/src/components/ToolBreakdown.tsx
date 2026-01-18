@@ -1,4 +1,5 @@
 import { formatDuration } from '@devtime/shared'
+import { getMaxSeconds } from '../utils'
 
 interface ToolData {
   tool: string
@@ -13,7 +14,7 @@ interface ToolBreakdownProps {
 }
 
 export function ToolBreakdown({ data }: ToolBreakdownProps) {
-  const maxSeconds = Math.max(...data.map(t => t.seconds), 1)
+  const maxSeconds = getMaxSeconds(data)
 
   return (
     <div className="bg-bg-secondary border border-border rounded-xl p-6">
