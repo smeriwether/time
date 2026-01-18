@@ -2,20 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as os from 'os';
 import * as crypto from 'crypto';
-
-interface Heartbeat {
-  tool: string;
-  timestamp: number;
-  activity_type: 'coding' | 'debugging' | 'browsing';
-  project?: string;
-  file?: string;
-  language?: string;
-  branch?: string;
-  machine_id?: string;
-  is_write?: boolean;
-  lines?: number;
-  cursor_line?: number;
-}
+import { type Heartbeat, API_VERSION } from '@devtime/shared';
 
 class DevTimeTracker {
   private statusBarItem: vscode.StatusBarItem;
@@ -45,11 +32,7 @@ class DevTimeTracker {
     this.statusBarItem.command = 'devtime.showStatus';
     this.statusBarItem.show();
     this.updateStatusBar();
-
-    // Load today's time from storage
     this.loadTodayTime();
-
-    // Start send timer
     this.startSendTimer();
   }
 
@@ -137,7 +120,6 @@ class DevTimeTracker {
     if (this.shouldExcludeProject(project)) return;
     if (this.shouldExcludeFile(filePath)) return;
 
-    // Debounce rapid events
     if (this.debounceTimer) {
       clearTimeout(this.debounceTimer);
     }
@@ -216,7 +198,7 @@ class DevTimeTracker {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), this.FETCH_TIMEOUT_MS);
 
-      const response = await fetch(`${apiEndpoint}/api/heartbeat/batch`, {
+      const response = await fetch(`${apiEndpoint}/${API_VERSION}/heartbeat/batch`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -244,7 +226,6 @@ class DevTimeTracker {
   }
 
   private requeue(heartbeats: Heartbeat[]): void {
-    // Re-add to front of queue, but respect max size
     const combined = [...heartbeats, ...this.heartbeatQueue];
     this.heartbeatQueue = combined.slice(-this.MAX_QUEUE_SIZE);
   }
@@ -317,7 +298,6 @@ export function activate(context: vscode.ExtensionContext) {
 
   tracker = new DevTimeTracker(context);
 
-  // Register event listeners
   context.subscriptions.push(
     vscode.workspace.onDidChangeTextDocument((e) => {
       if (e.contentChanges.length > 0) {
@@ -352,7 +332,6 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
-  // Debug session tracking
   context.subscriptions.push(
     vscode.debug.onDidStartDebugSession(() => {
       tracker?.onDebugStart();
@@ -365,7 +344,6 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
-  // Register commands
   context.subscriptions.push(
     vscode.commands.registerCommand('devtime.showStatus', () => {
       tracker?.showStatus();

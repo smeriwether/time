@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { formatDuration, type StatsQuery } from '@devtime/shared'
 
 // Mock data for demonstration
 const mockData = {
@@ -48,16 +49,7 @@ const mockData = {
   ],
 }
 
-function formatDuration(seconds: number): string {
-  const hours = Math.floor(seconds / 3600)
-  const minutes = Math.floor((seconds % 3600) / 60)
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`
-  }
-  return `${minutes}m`
-}
-
-type Period = 'today' | 'week' | 'month' | 'year'
+type Period = StatsQuery['range']
 
 function App() {
   const [period, setPeriod] = useState<Period>('week')

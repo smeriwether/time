@@ -5,6 +5,9 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", "out/**"]
     },
+    "test": {
+      "dependsOn": ["^build"]
+    },
     "dev": {
       "cache": false,
       "persistent": true

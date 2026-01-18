@@ -107,10 +107,111 @@ Language server approach for Zed editor:
 
 ```
 packages/
-├── shared/           # Shared TypeScript types
-├── dashboard/        # React dashboard (Vite)
+├── shared/           # Zod schemas and utilities shared across all packages
+├── api/              # Cloudflare Workers API (Hono)
+├── dashboard/        # React dashboard (Vite + Tailwind CSS)
 └── plugins/
     └── vscode/       # VSCode extension
+```
+
+## API
+
+The API is built on Cloudflare Workers using Hono. All routes are versioned (`/v1/...`).
+
+### Endpoints
+
+#### `POST /v1/heartbeat`
+
+Send a single heartbeat.
+
+```bash
+curl -X POST https://api.devtime.dev/v1/heartbeat \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer dt_your_api_key" \
+  -d '{
+    "tool": "vscode",
+    "timestamp": 1705600000000,
+    "activity_type": "coding",
+    "project": "my-project",
+    "file": "index.ts",
+    "language": "typescript"
+  }'
+```
+
+#### `POST /v1/heartbeat/batch`
+
+Send multiple heartbeats at once (recommended for plugins).
+
+```bash
+curl -X POST https://api.devtime.dev/v1/heartbeat/batch \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer dt_your_api_key" \
+  -d '{
+    "heartbeats": [
+      { "tool": "vscode", "timestamp": 1705600000000, "activity_type": "coding", ... },
+      { "tool": "vscode", "timestamp": 1705600030000, "activity_type": "coding", ... }
+    ]
+  }'
+```
+
+#### `GET /v1/stats`
+
+Get aggregated statistics.
+
+```bash
+curl https://api.devtime.dev/v1/stats?range=week \
+  -H "Authorization: Bearer dt_your_api_key"
+```
+
+Query parameters:
+- `range`: `today`, `week`, `month`, or `year` (default: `week`)
+- `project`: Filter by project name
+- `tool`: Filter by tool name
+
+Response:
+```json
+{
+  "total_seconds": 127800,
+  "by_tool": { "vscode": 72000, "claude-code": 36000 },
+  "by_project": { "devtime": 43200, "api-server": 28800 },
+  "by_language": { "typescript": 54000, "python": 28800 },
+  "by_day": [
+    { "date": "2025-01-18", "seconds": 14400 }
+  ]
+}
+```
+
+### Heartbeat Schema
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `tool` | string | Yes | Tool identifier (`vscode`, `claude-code`, `codex`, `zed`) |
+| `timestamp` | number | Yes | Unix timestamp in milliseconds |
+| `activity_type` | string | Yes | Activity type (`coding`, `debugging`, `prompting`, `browsing`) |
+| `project` | string | No | Project/workspace name |
+| `file` | string | No | File name (not full path) |
+| `language` | string | No | Programming language |
+| `branch` | string | No | Git branch name |
+| `machine_id` | string | No | Machine identifier for multi-device tracking |
+| `is_write` | boolean | No | Whether this was a write operation |
+| `lines` | number | No | Total lines in file |
+| `cursor_line` | number | No | Current cursor line |
+
+### API Deployment
+
+```bash
+cd packages/api
+
+# Local development
+pnpm dev
+
+# Deploy to Cloudflare
+pnpm deploy
+```
+
+Configure Cloudflare secrets:
+```bash
+wrangler secret put API_KEYS  # KV namespace binding
 ```
 
 ## Development
@@ -122,9 +223,17 @@ pnpm install
 # Build all packages
 pnpm build
 
+# Run all tests
+pnpm test
+
 # Build specific package
+pnpm --filter @devtime/shared build
+pnpm --filter @devtime/api build
 pnpm --filter @devtime/dashboard build
 pnpm --filter devtime-vscode build
+
+# Run API locally
+pnpm --filter @devtime/api dev
 
 # Run dashboard locally
 pnpm --filter @devtime/dashboard dev
@@ -140,10 +249,31 @@ pnpm --filter @devtime/dashboard preview
 | Service | Purpose | Free Tier |
 |---------|---------|-----------|
 | **Cloudflare Workers** | API | 100K req/day |
-| **PlanetScale** | Database | 1B row reads/mo |
+| **Cloudflare D1** | Database | 5M reads/day, 100K writes/day |
+| **Cloudflare KV** | API key storage | 100K reads/day |
 | **Cloudflare Pages** | Dashboard | Unlimited |
 
 **Total cost: $0/month** for personal use
+
+### Cloudflare Setup
+
+1. Create a D1 database:
+```bash
+wrangler d1 create devtime-db
+```
+
+2. Create KV namespaces:
+```bash
+wrangler kv:namespace create API_KEYS
+wrangler kv:namespace create HEARTBEATS
+```
+
+3. Update `wrangler.toml` with the binding IDs
+
+4. Deploy:
+```bash
+pnpm --filter @devtime/api deploy
+```
 
 ## Configuration
 
