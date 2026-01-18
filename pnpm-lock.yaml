@@ -80,6 +80,19 @@ importers:
         specifier: ^5.0.0
         version: 5.4.21(@types/node@20.19.30)(lightningcss@1.30.2)
 
+  packages/plugins/claude-code:
+    dependencies:
+      '@devtime/shared':
+        specifier: workspace:*
+        version: link:../../shared
+    devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.30
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
+
   packages/plugins/vscode:
     dependencies:
       '@devtime/shared':

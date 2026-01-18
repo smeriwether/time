@@ -84,12 +84,42 @@ pnpm build
 }
 ```
 
-### Claude Code (Coming Soon)
+### Claude Code
 
-Uses Claude Code's hook system to track AI coding sessions:
-- SessionStart/SessionEnd hooks for session duration
-- Token usage tracking
-- Project and file context
+Uses Claude Code's hook system to track AI coding sessions.
+
+**Installation:**
+```bash
+cd packages/plugins/claude-code
+pnpm install
+pnpm build
+
+# Install hooks into Claude Code
+node dist/cli.js install
+
+# Configure API endpoint
+node dist/cli.js config --endpoint https://api.devtime.dev --key dt_xxx
+```
+
+**What it tracks:**
+- SessionStart/SessionEnd for session duration
+- Tool usage (Bash, Read, Write, Edit, Glob, Grep)
+- Project context from working directory
+- File and language detection
+
+**How it works:**
+1. Hooks are added to `~/.claude/settings.json`
+2. Each tool use triggers a heartbeat
+3. Heartbeats are queued locally in `~/.devtime/heartbeat-queue.json`
+4. Queue is flushed to API on session end (or manually with `flush` command)
+
+**Commands:**
+```bash
+devtime-claude install     # Install hooks
+devtime-claude uninstall   # Remove hooks
+devtime-claude config      # Configure API
+devtime-claude flush       # Manually flush queue
+```
 
 ### Codex CLI (Coming Soon)
 
@@ -111,7 +141,8 @@ packages/
 ├── api/              # Cloudflare Workers API (Hono)
 ├── dashboard/        # React dashboard (Vite + Tailwind CSS)
 └── plugins/
-    └── vscode/       # VSCode extension
+    ├── vscode/       # VSCode extension
+    └── claude-code/  # Claude Code hook-based plugin
 ```
 
 ## API
