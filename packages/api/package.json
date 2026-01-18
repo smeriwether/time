@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "wrangler dev --env development",
+    "dev:local": "DATABASE_URL=postgres://devtime:devtime@localhost:5432/devtime tsx watch src/dev.ts",
     "deploy": "wrangler deploy --env production",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -11,11 +12,15 @@
   },
   "dependencies": {
     "@devtime/shared": "workspace:*",
+    "@hono/node-server": "^1.13.0",
     "hono": "^4.0.0",
+    "pg": "^8.13.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240117.0",
+    "@types/pg": "^8.11.0",
+    "tsx": "^4.19.0",
     "typescript": "^5.3.0",
     "vitest": "^2.0.0",
     "wrangler": "^4.0.0"
