@@ -1,0 +1,16 @@
+{
+  "name": "devtime-claude-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DevTime activity tracking plugin for Claude Code",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=lib/index.js",
+    "watch": "esbuild src/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=lib/index.js --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.0",
+    "@types/node": "^20.0.0"
+  }
+}

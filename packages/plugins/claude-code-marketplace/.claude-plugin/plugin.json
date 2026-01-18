@@ -1,0 +1,12 @@
+{
+  "name": "devtime",
+  "version": "0.1.0",
+  "description": "Track development time in Claude Code sessions",
+  "author": {
+    "name": "DevTime"
+  },
+  "repository": "https://github.com/smeriwether/devtime",
+  "license": "MIT",
+  "hooks": "./hooks/hooks.json",
+  "commands": ["./commands/devtime-config.md"]
+}

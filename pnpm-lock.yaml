@@ -105,6 +105,18 @@ importers:
         specifier: ^5.3.0
         version: 5.9.3
 
+  packages/plugins/claude-code-marketplace:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.30
+      esbuild:
+        specifier: ^0.20.0
+        version: 0.20.2
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
+
   packages/plugins/vscode:
     dependencies:
       '@devtime/shared':
