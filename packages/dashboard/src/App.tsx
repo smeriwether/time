@@ -67,31 +67,37 @@ function App() {
   const maxLangSeconds = Math.max(...mockData.byLanguage.map(l => l.seconds))
 
   return (
-    <div className="app">
-      <header className="header">
-        <div className="logo">
-          <div className="logo-icon">
+    <div className="min-h-screen">
+      {/* Header */}
+      <header className="bg-bg-secondary border-b border-border px-6 py-4 flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 logo-gradient rounded-lg flex items-center justify-center">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
             </svg>
           </div>
-          <span>DevTime</span>
+          <span className="text-xl font-semibold">DevTime</span>
         </div>
-        <nav className="nav">
-          <a href="#" className="nav-link active">Dashboard</a>
-          <a href="#" className="nav-link">Projects</a>
-          <a href="#" className="nav-link">Goals</a>
-          <a href="#" className="nav-link">Settings</a>
+        <nav className="flex gap-6">
+          <a href="#" className="text-sm text-text-primary hover:text-text-primary transition-colors">Dashboard</a>
+          <a href="#" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Projects</a>
+          <a href="#" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Goals</a>
+          <a href="#" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Settings</a>
         </nav>
       </header>
 
-      <main className="main">
-        <div className="period-selector">
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* Period Selector */}
+        <div className="flex gap-2 mb-6">
           {(['today', 'week', 'month', 'year'] as Period[]).map(p => (
             <button
               key={p}
-              className={`period-btn ${period === p ? 'active' : ''}`}
+              className={`px-4 py-2 rounded-md text-sm transition-all ${
+                period === p
+                  ? 'bg-accent-blue text-white border border-accent-blue'
+                  : 'bg-bg-secondary text-text-secondary border border-border hover:border-text-secondary'
+              }`}
               onClick={() => setPeriod(p)}
             >
               {p.charAt(0).toUpperCase() + p.slice(1)}
@@ -99,64 +105,73 @@ function App() {
           ))}
         </div>
 
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-label">Total Time</div>
-            <div className="stat-value">{formatDuration(mockData.totalSeconds)}</div>
-            <div className="stat-change">+{mockData.weeklyChange}% from last week</div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="bg-bg-secondary border border-border rounded-xl p-5">
+            <div className="text-xs text-text-secondary uppercase tracking-wide mb-2">Total Time</div>
+            <div className="text-3xl font-semibold">{formatDuration(mockData.totalSeconds)}</div>
+            <div className="text-xs text-accent-green mt-1">+{mockData.weeklyChange}% from last week</div>
           </div>
-          <div className="stat-card">
-            <div className="stat-label">Daily Average</div>
-            <div className="stat-value">{formatDuration(mockData.dailyAverage)}</div>
-            <div className="stat-change">+8% from last week</div>
+          <div className="bg-bg-secondary border border-border rounded-xl p-5">
+            <div className="text-xs text-text-secondary uppercase tracking-wide mb-2">Daily Average</div>
+            <div className="text-3xl font-semibold">{formatDuration(mockData.dailyAverage)}</div>
+            <div className="text-xs text-accent-green mt-1">+8% from last week</div>
           </div>
-          <div className="stat-card">
-            <div className="stat-label">Current Streak</div>
-            <div className="stat-value">{mockData.streak} days</div>
-            <div className="stat-change">Personal best!</div>
+          <div className="bg-bg-secondary border border-border rounded-xl p-5">
+            <div className="text-xs text-text-secondary uppercase tracking-wide mb-2">Current Streak</div>
+            <div className="text-3xl font-semibold">{mockData.streak} days</div>
+            <div className="text-xs text-accent-green mt-1">Personal best!</div>
           </div>
-          <div className="stat-card">
-            <div className="stat-label">Projects Active</div>
-            <div className="stat-value">{mockData.byProject.length}</div>
-            <div className="stat-change">2 new this week</div>
+          <div className="bg-bg-secondary border border-border rounded-xl p-5">
+            <div className="text-xs text-text-secondary uppercase tracking-wide mb-2">Projects Active</div>
+            <div className="text-3xl font-semibold">{mockData.byProject.length}</div>
+            <div className="text-xs text-accent-green mt-1">2 new this week</div>
           </div>
         </div>
 
-        <div className="charts-section">
-          <div className="chart-card">
-            <div className="chart-title">Activity This Week</div>
-            <div className="bar-chart">
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Activity Chart */}
+          <div className="lg:col-span-2 bg-bg-secondary border border-border rounded-xl p-6">
+            <h3 className="text-base font-semibold mb-5">Activity This Week</h3>
+            <div className="flex items-end gap-2 h-48 pt-5">
               {mockData.byDay.map((day, i) => (
-                <div key={i} className="bar-container">
+                <div key={i} className="flex-1 flex flex-col items-center h-full">
                   <div
-                    className="bar"
+                    className="w-full max-w-10 bar-gradient rounded-t hover:opacity-80 transition-opacity relative group"
                     style={{ height: `${(day.seconds / maxDaySeconds) * 100}%` }}
                   >
-                    <div className="bar-tooltip">{formatDuration(day.seconds)}</div>
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-bg-tertiary px-2 py-1 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                      {formatDuration(day.seconds)}
+                    </div>
                   </div>
-                  <div className="bar-label">{day.day}</div>
+                  <div className="mt-2 text-xs text-text-secondary">{day.day}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="chart-card">
-            <div className="chart-title">By Tool</div>
-            <div className="breakdown-list">
+          {/* By Tool */}
+          <div className="bg-bg-secondary border border-border rounded-xl p-6">
+            <h3 className="text-base font-semibold mb-5">By Tool</h3>
+            <div className="flex flex-col gap-4">
               {mockData.byTool.map((tool, i) => (
-                <div key={i} className="breakdown-item">
-                  <div className="breakdown-header">
-                    <div className="breakdown-name">
-                      <div className="breakdown-icon" style={{ backgroundColor: tool.color }}>
+                <div key={i} className="flex flex-col gap-2">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-sm">
+                      <div
+                        className="w-5 h-5 rounded flex items-center justify-center text-xs text-white"
+                        style={{ backgroundColor: tool.color }}
+                      >
                         {tool.icon}
                       </div>
                       {tool.name}
                     </div>
-                    <div className="breakdown-value">{formatDuration(tool.seconds)}</div>
+                    <div className="text-sm text-text-secondary">{formatDuration(tool.seconds)}</div>
                   </div>
-                  <div className="breakdown-bar-bg">
+                  <div className="h-2 bg-bg-tertiary rounded overflow-hidden">
                     <div
-                      className="breakdown-bar-fill"
+                      className="h-full rounded transition-all duration-300"
                       style={{
                         width: `${(tool.seconds / maxToolSeconds) * 100}%`,
                         backgroundColor: tool.color,
@@ -169,24 +184,32 @@ function App() {
           </div>
         </div>
 
-        <div className="charts-section">
-          <div className="chart-card">
-            <div className="chart-title">By Language</div>
-            <div className="breakdown-list">
+        {/* Second Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* By Language */}
+          <div className="bg-bg-secondary border border-border rounded-xl p-6">
+            <h3 className="text-base font-semibold mb-5">By Language</h3>
+            <div className="flex flex-col gap-4">
               {mockData.byLanguage.map((lang, i) => (
-                <div key={i} className="breakdown-item">
-                  <div className="breakdown-header">
-                    <div className="breakdown-name">
-                      <div className="breakdown-icon" style={{ backgroundColor: lang.color }}>
+                <div key={i} className="flex flex-col gap-2">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-sm">
+                      <div
+                        className="w-5 h-5 rounded flex items-center justify-center text-xs font-medium"
+                        style={{
+                          backgroundColor: lang.color,
+                          color: lang.name === 'JavaScript' ? '#000' : '#fff'
+                        }}
+                      >
                         {lang.name.substring(0, 2).toUpperCase()}
                       </div>
                       {lang.name}
                     </div>
-                    <div className="breakdown-value">{formatDuration(lang.seconds)}</div>
+                    <div className="text-sm text-text-secondary">{formatDuration(lang.seconds)}</div>
                   </div>
-                  <div className="breakdown-bar-bg">
+                  <div className="h-2 bg-bg-tertiary rounded overflow-hidden">
                     <div
-                      className="breakdown-bar-fill"
+                      className="h-full rounded transition-all duration-300"
                       style={{
                         width: `${(lang.seconds / maxLangSeconds) * 100}%`,
                         backgroundColor: lang.color,
@@ -198,39 +221,49 @@ function App() {
             </div>
           </div>
 
-          <div className="chart-card">
-            <div className="chart-title">Recent Activity</div>
-            <div className="activity-list">
+          {/* Recent Activity */}
+          <div className="bg-bg-secondary border border-border rounded-xl p-6">
+            <h3 className="text-base font-semibold mb-5">Recent Activity</h3>
+            <div className="flex flex-col">
               {mockData.recentActivity.map((activity, i) => (
-                <div key={i} className="activity-item">
-                  <div className="activity-time">{activity.time}</div>
-                  <div className="activity-icon" style={{ backgroundColor: activity.color }}>
+                <div
+                  key={i}
+                  className={`flex items-center gap-4 py-4 ${
+                    i !== mockData.recentActivity.length - 1 ? 'border-b border-border' : ''
+                  }`}
+                >
+                  <div className="text-xs text-text-secondary min-w-[60px]">{activity.time}</div>
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-xs text-white"
+                    style={{ backgroundColor: activity.color }}
+                  >
                     {activity.tool === 'VS Code' ? 'VS' : activity.tool === 'Claude Code' ? 'CC' : activity.tool.charAt(0)}
                   </div>
-                  <div className="activity-details">
-                    <div className="activity-title">{activity.file}</div>
-                    <div className="activity-subtitle">{activity.project}</div>
+                  <div className="flex-1">
+                    <div className="text-sm font-medium">{activity.file}</div>
+                    <div className="text-xs text-text-secondary">{activity.project}</div>
                   </div>
-                  <div className="activity-duration">{formatDuration(activity.duration)}</div>
+                  <div className="text-sm font-medium text-accent-green">{formatDuration(activity.duration)}</div>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="chart-card">
-          <div className="chart-title">Top Projects</div>
-          <div className="projects-grid">
+        {/* Top Projects */}
+        <div className="bg-bg-secondary border border-border rounded-xl p-6">
+          <h3 className="text-base font-semibold mb-5">Top Projects</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {mockData.byProject.map((project, i) => (
-              <div key={i} className="project-card">
-                <div className="project-name">
+              <div key={i} className="bg-bg-primary border border-border rounded-xl p-5 flex flex-col gap-3">
+                <div className="text-base font-semibold flex items-center gap-2">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
                   </svg>
                   {project.name}
                 </div>
-                <div className="project-time">{formatDuration(project.seconds)}</div>
-                <div className="project-meta">
+                <div className="text-2xl font-semibold text-accent-blue">{formatDuration(project.seconds)}</div>
+                <div className="flex gap-4 text-xs text-text-secondary">
                   <span>{project.languages.join(', ')}</span>
                   <span>Last active: {project.lastActive}</span>
                 </div>
@@ -240,9 +273,13 @@ function App() {
         </div>
       </main>
 
-      <footer className="footer">
+      {/* Footer */}
+      <footer className="border-t border-border py-6 text-center text-sm text-text-secondary">
         <p>
-          DevTime is open source. <a href="https://github.com/devtime/devtime">View on GitHub</a>
+          DevTime is open source.{' '}
+          <a href="https://github.com/devtime/devtime" className="text-accent-blue hover:underline">
+            View on GitHub
+          </a>
         </p>
       </footer>
     </div>
