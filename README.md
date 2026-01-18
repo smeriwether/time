@@ -273,6 +273,26 @@ pnpm --filter @devtime/dashboard dev
 pnpm --filter @devtime/dashboard preview
 ```
 
+### Running E2E Tests
+
+The dashboard includes Playwright end-to-end tests that verify the full flow from sending heartbeats to displaying data in the UI.
+
+```bash
+# Install Playwright browsers (first time only)
+npx playwright install chromium
+
+# Run e2e tests (starts API and dashboard automatically)
+pnpm --filter @devtime/dashboard test:e2e
+
+# Run e2e tests with UI mode for debugging
+pnpm --filter @devtime/dashboard test:e2e:ui
+```
+
+The e2e tests will automatically:
+1. Start the API server on port 8787
+2. Start the dashboard dev server on port 5173
+3. Run tests that send heartbeats and verify the UI displays correct data
+
 ## Hosting
 
 ### Recommended Stack (Free Tier)
